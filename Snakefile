@@ -28,6 +28,11 @@ reference_directory = os.path.join(GLOBAL_REF_PATH,config["organism"],config["re
 #
 sample_tab = pd.DataFrame.from_dict(config["samples"],orient="index")
 
+SAMPLES = [x for x in sample_tab.sample_name]
+LIBS = [x.rsplit("_",1)[0] for x in SAMPLES]
+NUMS = [x.rsplit("_",1)[1] for x in SAMPLES]
+
+
 if config["lib_reverse_read_length"] == 0:
     read_pair_tags = [""]
 else:
@@ -39,13 +44,14 @@ wildcard_constraints:
     read_pair_tag = "(_R.)?"
 
 
+
 rule all:
-    input: os.path.join(config["library_name"]+".final_report.html")
+    input: os.path.join("results",config["library_name"]+".final_report.html")
 
 ##### Modules #####
 
 include: "rules/single_cell.smk"
 
-SAMPLES = [x for x in sample_tab.sample_name]
-LIBS = [x.rsplit("_",1)[0] for x in SAMPLES]
-NUMS = [x.rsplit("_",1)[1] for x in SAMPLES]
+
+
+

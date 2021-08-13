@@ -6,14 +6,11 @@
     "type": "single_cell",
     "inputs": "*/{sample}*fastq.gz",
     "outputs": [
-      "logs/*",
-      "cellranger/*",
-      "singleCell_fastq/*",
-      "single_cell_final_report.html"
+      "results/*"
     ],
-    "report_index": "single_cell_final_report.html",
+    "report_index": "results/single_cell_final_report.html",
     "reports":[
-       "single_cell_final_report.html"
+       "results/*"
     ]
   },
   "general_params": [
@@ -23,11 +20,23 @@
     "lib_reverse_read_length"
   ],
   "gui_params": {
+    "primary": {
+      "reference": {
+        "label": "Genomic Reference",
+        "type": "enum",
+        "default": "GRCh38-p10",
+        "list": ##INCLUDE:reference_info/reference.json##
+      }
+    },
     "detailed": {
       "sc_hashtags": {
         "label": "sc_hashtags",
-        "type": "string",
-        "default": "classic"
+        "type": "enum",
+        "default": "classic",
+        "list": {
+          "classic": "classic",
+          "no": "no sc_hashtag"
+        }
       }
     }
   }
