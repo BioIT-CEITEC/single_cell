@@ -4,7 +4,7 @@
     "version": 1.0,
     "label": "Single cell",
     "type": "single_cell",
-    "inputs": "*/{sample}*fastq.gz",
+    "inputs": "qc_reports/{sample}*fastq.gz",
     "outputs": [
       "results/*"
     ],
