@@ -4,13 +4,13 @@
     "version": 1.0,
     "label": "Single cell",
     "type": "single_cell",
-    "inputs": "qc_reports/{sample}*fastq.gz",
+    "inputs": "raw_fastq/{sample}*fastq.gz",
     "outputs": [
-      "results/*"
+      "cell_ranger/*"
     ],
-    "report_index": "results/single_cell_final_report.html",
+    "report_index": "*.final_report.html",
     "reports":[
-       "results/*"
+       "*"
     ]
   },
   "general_params": [

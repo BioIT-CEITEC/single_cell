@@ -32,7 +32,6 @@ SAMPLES = [x for x in sample_tab.sample_name]
 LIBS = [x.rsplit("_",1)[0] for x in SAMPLES]
 NUMS = [x.rsplit("_",1)[1] for x in SAMPLES]
 
-
 if config["lib_reverse_read_length"] == 0:
     read_pair_tags = [""]
 else:
@@ -46,7 +45,7 @@ wildcard_constraints:
 
 
 rule all:
-    input: os.path.join("results",config["library_name"]+".final_report.html")
+    input: os.path.join(config["library_name"]+".final_report.html")
 
 ##### Modules #####
 

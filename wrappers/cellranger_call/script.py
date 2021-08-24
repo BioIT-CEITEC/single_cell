@@ -58,7 +58,7 @@ command = "cd " + snakemake.params.wdir + " ; rm -Rf " + snakemake.params.outdir
           " " + feature_ref_parameter + \
           " --transcriptome=" + snakemake.params.transcriptome + \
           " --localcores " + str(snakemake.threads) + \
-          " >> " + log_filename.replace(snakemake.params.wdir + "/", "") + " 2>&1 ; cd .. "
+          " >> " + log_filename.replace(snakemake.params.wdir + "/", "") + " 2>&1 ; cd .."
 
 f = open(log_filename, 'at')
 f.write("## COMMAND: " + command + "\n")
