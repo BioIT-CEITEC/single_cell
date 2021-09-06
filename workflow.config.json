@@ -8,9 +8,9 @@
     "outputs": [
       "cell_ranger/*"
     ],
-    "report_index": "*.final_report.html",
+    "report_index": "cell_ranger/outs/web_summary.html",
     "reports":[
-       "*"
+       "cell_ranger/outs/web_summary.html"
     ]
   },
   "general_params": [

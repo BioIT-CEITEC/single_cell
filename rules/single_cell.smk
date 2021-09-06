@@ -13,9 +13,8 @@ rule cellranger_call:
           binary = os.path.join(GLOBAL_REF_PATH,"general/cellranger/cellranger-5.0.1","cellranger"),
           feature_ref_dir = os.path.join(GLOBAL_REF_PATH,"general/cellranger/feature_ref_files"),
           sc_hashtags = config["sc_hashtags"],
-          transcriptome = expand("{ref_dir}/other/cellranger/refdata-gex-{ref}",ref_dir=reference_directory,ref=config["reference"])[0],
-          HTML = "cell_ranger/outs/web_summary.html"
-  output: REPORT = os.path.join(config["library_name"]+".final_report.html")
+          transcriptome = expand("{ref_dir}/other/cellranger/refdata-gex-{ref}",ref_dir=reference_directory,ref=config["reference"])[0]
+  output: "cell_ranger/outs/web_summary.html"
   log:   "logs/all_samples/cellranger_call.log",
   threads: 40
   conda:   "../wrappers/cellranger_call/env.yaml"
