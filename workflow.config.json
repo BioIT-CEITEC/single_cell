@@ -14,7 +14,7 @@
     ]
   },
   "general_params": [
-    "library_name",
+    "entity_name",
     "sample_name",
     "lib_forward_read_length",
     "lib_reverse_read_length"
@@ -36,6 +36,17 @@
         "list": {
           "classic": "classic",
           "no": "no sc_hashtag"
+        }
+      }
+    },
+    "samples": {
+      "SC_lib_type": {
+        "label": "SC library type",
+        "type": "enum",
+        "default": "Gene Expression",
+        "list": {
+          "Gene Expression": "Gene Expression",
+          "Antibody Capture": "Antibody Capture"
         }
       }
     }

@@ -31,13 +31,8 @@ for x in LIBS:
     f.write("## COMMAND: create " + x + " folder\n")
     f.close()
 
-    if "GE" in x:
-        LIBRARY_TYPE = "Gene Expression"
-    else:
-        LIBRARY_TYPE = "Antibody Capture"
-
     SAMPLE_LIB_DIR = os.path.join(snakemake.params.wdir, "singleCell_fastq", x)
-    line_to_write = SAMPLE_LIB_DIR + "," + x + "," + LIBRARY_TYPE + "\n"
+    line_to_write = SAMPLE_LIB_DIR + "," + x + "," + snakemake.params.library_types_dict[x] + "\n"
     lf = open(snakemake.params.libraries, "at")
     lf.write(line_to_write)
     lf.close()

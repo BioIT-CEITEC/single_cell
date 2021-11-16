@@ -30,6 +30,12 @@ sample_tab = pd.DataFrame.from_dict(config["samples"],orient="index")
 
 SAMPLES = [x for x in sample_tab.sample_name]
 LIBS = [x.rsplit("_",1)[0] for x in SAMPLES]
+library_types_dict = {}
+for idx, val in enumerate(sample_tab.SC_lib_type):
+    if LIBS[idx] in library_types_dict and library_types_dict[LIBS[idx]] != val:
+        raise ValueError("All 'SC type' for one SC library must be the same (Gene Expression or Antibody Capture). Fix library setting.")
+    else:
+        library_types_dict[LIBS[idx]] = val
 NUMS = [x.rsplit("_",1)[1] for x in SAMPLES]
 
 if config["lib_reverse_read_length"] == 0:
