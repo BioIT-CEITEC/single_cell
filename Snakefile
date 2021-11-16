@@ -38,10 +38,10 @@ for idx, val in enumerate(sample_tab.SC_lib_type):
         library_types_dict[LIBS[idx]] = val
 NUMS = [x.rsplit("_",1)[1] for x in SAMPLES]
 
-if config["lib_reverse_read_length"] == 0:
-    read_pair_tags = [""]
-else:
-    read_pair_tags = ["_R1","_R2"]
+# if not config["is_paired"]:
+#     read_pair_tags = [""]
+# else:
+#     read_pair_tags = ["_R1","_R2"]
 
 wildcard_constraints:
     sample = "|".join(sample_tab.sample_name),
