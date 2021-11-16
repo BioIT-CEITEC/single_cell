@@ -7,7 +7,7 @@ rule cellranger_call:
   input: c1 = expand("singleCell_fastq/{lib}/{lib}_S{num}_L001_R1_001.fastq.gz", zip,  lib=LIBS, num=NUMS),
          c2 = expand("singleCell_fastq/{lib}/{lib}_S{num}_L001_R2_001.fastq.gz", zip,  lib=LIBS, num=NUMS)
   params: sample = SAMPLES,
-          libraries = os.path.join(config["library_name"]+".lib.csv"),
+          libraries = os.path.join(config["entity_name"]+".lib.csv"),
           wdir = os.getcwd(),
           outdir = "cell_ranger",
           binary = os.path.join(GLOBAL_REF_PATH,"general/cellranger/cellranger-5.0.1","cellranger"),
