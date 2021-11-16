@@ -45,7 +45,7 @@ wildcard_constraints:
 
 
 rule all:
-    input: os.path.join(config["library_name"]+".final_report.html")
+    input: os.path.join(config["entity_name"]+".final_report.html")
 
 ##### Modules #####
 

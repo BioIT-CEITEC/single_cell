@@ -14,7 +14,7 @@
     ]
   },
   "general_params": [
-    "library_name",
+    "entity_name",
     "sample_name",
     "lib_forward_read_length",
     "lib_reverse_read_length"
