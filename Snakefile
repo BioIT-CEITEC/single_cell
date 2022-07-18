@@ -3,33 +3,41 @@ import json
 import pandas as pd
 from snakemake.utils import min_version
 
-min_version("5.18.0")
+min_version("7.2.1")
 
 configfile: "config.json"
 
-
+config["computing_type"] = "kubernetes"
 GLOBAL_REF_PATH = "/mnt/references/"
 
+module BR:
+    snakefile: gitlab("bioroots/bioroots_utilities", path="bioroots_utilities.smk",branch="main")
+    config: config
+
+use rule * from BR as other_*
 
 if not "sc_hashtags" in config:
     config["sc_hashtags"] = "no"
 
-
 # setting organism from reference
-f = open(os.path.join(GLOBAL_REF_PATH,"reference_info","reference.json"),)
-reference_dict = json.load(f)
-f.close()
-config["organism"] = [organism_name.lower().replace(" ","_") for organism_name in reference_dict.keys() if isinstance(reference_dict[organism_name],dict) and config["reference"] in reference_dict[organism_name].keys()][0]
+#f = open(os.path.join(GLOBAL_REF_PATH,"reference_info","reference.json"),)
+#reference_dict = json.load(f)
+#f.close()
+#config["organism"] = [organism_name.lower().replace(" ","_") for organism_name in reference_dict.keys() if isinstance(reference_dict[organism_name],dict) and config["reference"] in reference_dict[organism_name].keys()][0]
+sample_tab = BR.load_sample()
+config["lib_ROI"] = "RNA"
+BR.load_ref()
+BR.load_organism()
 
 
 ##### Config processing #####
+#
 # Folders
 #
-reference_directory = os.path.join(GLOBAL_REF_PATH,config["organism"],config["reference"])
+reference_directory = BR.reference_directory()
 
 # Samples
 #
-sample_tab = pd.DataFrame.from_dict(config["samples"],orient="index")
 
 SAMPLES = [x for x in sample_tab.sample_name]
 LIBS = [x.rsplit("_",1)[0] for x in SAMPLES]
@@ -54,7 +62,7 @@ wildcard_constraints:
 
 
 rule all:
-    input: "cell_ranger/outs/web_summary.html"
+    input: BR.remote("cell_ranger/outs/web_summary.html")
 
 ##### Modules #####
 
