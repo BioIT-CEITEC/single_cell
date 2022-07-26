@@ -1,6 +1,3 @@
-import os
-import json
-import pandas as pd
 from snakemake.utils import min_version
 
 min_version("7.2.1")
@@ -24,6 +21,7 @@ if not "sc_hashtags" in config:
 #reference_dict = json.load(f)
 #f.close()
 #config["organism"] = [organism_name.lower().replace(" ","_") for organism_name in reference_dict.keys() if isinstance(reference_dict[organism_name],dict) and config["reference"] in reference_dict[organism_name].keys()][0]
+
 sample_tab = BR.load_sample()
 config["lib_ROI"] = "RNA"
 BR.load_ref()
