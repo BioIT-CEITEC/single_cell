@@ -14,13 +14,12 @@ f = open(log_filename, 'wt')
 f.write("\n##\n## RULE: cellranger_call \n##\n")
 f.close()
 
-
 # CREATE the csv file if not existing and add the header
-lf = open(snakemake.params.libraries, "w")
+lf = open(snakemake.input.libraries, "w")
 lf.write("fastqs,sample,library_type\n")
 lf.close()
 f = open(log_filename, 'at')
-f.write("## COMMAND: create" + snakemake.params.libraries + " file\n")
+f.write("## COMMAND: create" + snakemake.input.libraries + " file\n")
 f.close()
 
 # ADD info to csv
@@ -33,12 +32,12 @@ for x in LIBS:
 
     SAMPLE_LIB_DIR = os.path.join(snakemake.params.wdir, "singleCell_fastq", x)
     line_to_write = SAMPLE_LIB_DIR + "," + x + "," + snakemake.params.library_types_dict[x] + "\n"
-    lf = open(snakemake.params.libraries, "at")
+    lf = open(snakemake.input.libraries, "at")
     lf.write(line_to_write)
     lf.close()
 
 f = open(log_filename, 'at')
-f.write("## COMMAND: filling" + snakemake.params.libraries + " file\n")
+f.write("## COMMAND: filling" + snakemake.input.libraries + " file\n")
 f.close()
 
 # CALL cellranger
@@ -47,14 +46,23 @@ if snakemake.params.sc_hashtags != "no":
 else:
     feature_ref_parameter = ""
 
-command = "cd " + snakemake.params.wdir + " ; rm -Rf " + snakemake.params.outdir + " ; " + snakemake.params.binary + " count " + \
+
+command =  "cd " + snakemake.params.wdir + " ; rm -Rf " + snakemake.params.outdir + " ; " + snakemake.input.binary + " count " + \
           " --id=" + snakemake.params.outdir + \
-          " --libraries=" + os.path.basename(snakemake.params.libraries) + \
+          " --libraries=" + os.path.basename(snakemake.input.libraries) + \
+          " " + feature_ref_parameter + \
+          " --transcriptome=" + snakemake.params.transcriptome + \
+          " --localcores " + str(snakemake.threads) + \
+          " >> " + log_filename.replace(snakemake.params.wdir + "/", "") + " 2>&1 ; cd .." 
+"""
+command = "cd " + snakemake.params.wdir + " ; rm -Rf " + snakemake.params.outdir + " ; " + snakemake.output.binary + " count " + \
+          " --id=" + snakemake.params.outdir + \
+          " --libraries=" + os.path.basename(snakemake.input.libraries) + \
           " " + feature_ref_parameter + \
           " --transcriptome=" + snakemake.params.transcriptome + \
           " --localcores " + str(snakemake.threads) + \
           " >> " + log_filename.replace(snakemake.params.wdir + "/", "") + " 2>&1 ; cd .."
-
+"""
 f = open(log_filename, 'at')
 f.write("## COMMAND: " + command + "\n")
 f.close()

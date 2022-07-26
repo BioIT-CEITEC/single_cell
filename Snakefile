@@ -5,7 +5,7 @@ min_version("7.2.1")
 configfile: "config.json"
 
 config["computing_type"] = "kubernetes"
-GLOBAL_REF_PATH = "/mnt/references/"
+GLOBAL_REF_PATH = config["globalResources"]
 
 module BR:
     snakefile: gitlab("bioroots/bioroots_utilities", path="bioroots_utilities.smk",branch="main")

@@ -2,19 +2,20 @@
 # ###################################
 # CELLRANGER RULES
 #
+import os
 
 rule cellranger_call:
   input: c1 = BR.remote(expand("singleCell_fastq/{lib}/{lib}_S{num}_L001_R1_001.fastq.gz", zip,  lib=LIBS, num=NUMS)),
-         c2 = BR.remote(expand("singleCell_fastq/{lib}/{lib}_S{num}_L001_R2_001.fastq.gz", zip,  lib=LIBS, num=NUMS))
+         c2 = BR.remote(expand("singleCell_fastq/{lib}/{lib}_S{num}_L001_R2_001.fastq.gz", zip,  lib=LIBS, num=NUMS)),
+         binary = BR.remote(os.path.join(GLOBAL_REF_PATH,"general/cellranger/cellranger-5.0.1","cellranger")),
+         libraries = BR.remote(os.path.join(config["entity_name"]+".lib.csv")),
   params: sample = SAMPLES,
-          libraries = BR.remote(os.path.join(config["entity_name"]+".lib.csv")),
-          wdir = os.getcwd(),
           outdir = "cell_ranger",
-          binary = BR.remote(os.path.join(GLOBAL_REF_PATH,"general/cellranger/cellranger-5.0.1","cellranger")),
-          feature_ref_dir = BR.remote(os.path.join(GLOBAL_REF_PATH,"general/cellranger/feature_ref_files")),
+          wdir = BR.remote(os.path.join(config["globalTaskPath"], config["task_name"])),
           sc_hashtags = config["sc_hashtags"],
+          transcriptome = BR.remote(expand("{ref_dir}/other/cellranger/refdata-gex-{ref}",ref_dir=reference_directory,ref=config["reference"])[0]),
+          feature_ref_dir = BR.remote(os.path.join(GLOBAL_REF_PATH,"general/cellranger/feature_ref_files")),
           library_types_dict = library_types_dict,
-          transcriptome = BR.remote(expand("{ref_dir}/other/cellranger/refdata-gex-{ref}",ref_dir=reference_directory,ref=config["reference"])[0])
   output: BR.remote("cell_ranger/outs/web_summary.html"),
   log:   BR.remote("logs/all_samples/cellranger_call.log"),
   threads: 40
