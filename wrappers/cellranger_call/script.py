@@ -1,8 +1,9 @@
 ######################################
 # wrapper for rule: cellranger_call
 ######################################
-import os
+import os, shutil
 from snakemake.shell import shell
+
 shell.executable("/bin/bash")
 log_filename = str(snakemake.log)
 
@@ -13,6 +14,25 @@ LIBS = list(set([x.rsplit("_", 1)[0] for x in SAMPLE]))
 f = open(log_filename, 'wt')
 f.write("\n##\n## RULE: cellranger_call \n##\n")
 f.close()
+
+###### FASTQ SYMLINK preprocessing
+
+# CREATE the symbolic link between the file in raw_fastq and singleCell_fastq folder
+for singlecell_fastq in snakemake.output.singleCell:
+    command = "mkdir -p " + os.path.dirname(singlecell_fastq)
+    shell(command)
+# f = open(log_filename, 'at')
+# f.write("## COMMAND: "+command+"\n")
+# f.close()
+
+assert len(snakemake.input.fastq) == len(snakemake.output.singleCell)
+for i in range(len(snakemake.input.fastq)):
+    command = "ln -s " + snakemake.input.fastq[i] + " " + snakemake.output.singleCell[i]
+    shell(command)
+
+# f = open(log_filename, 'at')
+# f.write("## COMMAND: "+command+"\n")
+# f.close()
 
 # CREATE the csv file if not existing and add the header
 lf = open(snakemake.input.libraries, "w")
@@ -47,26 +67,28 @@ else:
     feature_ref_parameter = ""
 
 
-command =  "cd " + snakemake.params.wdir + " ; rm -Rf " + snakemake.params.outdir + " ; " + snakemake.input.binary + " count " + \
-          " --id=" + snakemake.params.outdir + \
-          " --libraries=" + os.path.basename(snakemake.input.libraries) + \
+command =   "rm -Rf " + os.path.join(snakemake.params.wdir, snakemake.params.outdir) + " ; " + snakemake.input.binary + " count " + \
+          " --id=" + os.path.join(snakemake.params.wdir, snakemake.params.outdir) + \
+          " --libraries=" + snakemake.input.libraries + \
           " " + feature_ref_parameter + \
-          " --transcriptome=" + snakemake.params.transcriptome + \
-          " --localcores " + str(snakemake.threads) + \
-          " >> " + log_filename.replace(snakemake.params.wdir + "/", "") + " 2>&1 ; cd .." 
-"""
-command = "cd " + snakemake.params.wdir + " ; rm -Rf " + snakemake.params.outdir + " ; " + snakemake.output.binary + " count " + \
-          " --id=" + snakemake.params.outdir + \
-          " --libraries=" + os.path.basename(snakemake.input.libraries) + \
-          " " + feature_ref_parameter + \
-          " --transcriptome=" + snakemake.params.transcriptome + \
-          " --localcores " + str(snakemake.threads) + \
-          " >> " + log_filename.replace(snakemake.params.wdir + "/", "") + " 2>&1 ; cd .."
-"""
+          " --transcriptome=" + snakemake.input.transcriptome + \
+          " --localcores " + str(snakemake.threads)
+          # " >> " + log_filename.replace(snakemake.params.wdir + "/", "") + " 2>&1 ;"
+
+
+# command =  "cd " + snakemake.params.wdir + " ; rm -Rf " + snakemake.params.outdir + " ; " + snakemake.input.binary + " count " + \
+#           " --id=" + snakemake.params.outdir + \
+#           " --libraries=" + os.path.basename(snakemake.input.libraries) + \
+#           " " + feature_ref_parameter + \
+#           " --transcriptome=" + snakemake.input.transcriptome + \
+#           " --localcores " + str(snakemake.threads) + \
+#           " >> " + log_filename.replace(snakemake.params.wdir + "/", "") + " 2>&1 ; cd .."
+
 f = open(log_filename, 'at')
 f.write("## COMMAND: " + command + "\n")
 f.close()
 shell(command)
+
 
 # command = "cp " + snakemake.params.HTML + " " + snakemake.output.REPORT
 # f = open(log_filename, 'at')

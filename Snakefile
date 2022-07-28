@@ -24,6 +24,9 @@ if not "sc_hashtags" in config:
 
 sample_tab = BR.load_sample()
 config["lib_ROI"] = "RNA"
+
+ref_data_suffix = config["reference"]
+
 BR.load_ref()
 BR.load_organism()
 
@@ -39,6 +42,7 @@ reference_directory = BR.reference_directory()
 
 SAMPLES = [x for x in sample_tab.sample_name]
 LIBS = [x.rsplit("_",1)[0] for x in SAMPLES]
+
 library_types_dict = {}
 for idx, val in enumerate(sample_tab.SC_lib_type):
     if LIBS[idx] in library_types_dict and library_types_dict[LIBS[idx]] != val:
@@ -47,10 +51,11 @@ for idx, val in enumerate(sample_tab.SC_lib_type):
         library_types_dict[LIBS[idx]] = val
 NUMS = [x.rsplit("_",1)[1] for x in SAMPLES]
 
-# if not config["is_paired"]:
-#     read_pair_tags = [""]
-# else:
-#     read_pair_tags = ["_R1","_R2"]
+if not config["is_paired"]:
+    read_pair_tags = [""]
+else:
+    read_pair_tags = ["_R1","_R2"] * (len(SAMPLES) // 2)
+
 
 wildcard_constraints:
     sample = "|".join(sample_tab.sample_name),
@@ -61,6 +66,8 @@ wildcard_constraints:
 
 rule all:
     input: BR.remote("cell_ranger/outs/web_summary.html")
+    output: BR.remote("completed.txt")
+    shell: "touch {output}"
 
 ##### Modules #####
 
