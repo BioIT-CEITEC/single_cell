@@ -5,22 +5,15 @@ min_version("7.2.1")
 configfile: "config.json"
 
 config["computing_type"] = "kubernetes"
-GLOBAL_REF_PATH = config["globalResources"]
 
 module BR:
-    snakefile: gitlab("bioroots/bioroots_utilities", path="bioroots_utilities.smk",branch="main")
+    snakefile: gitlab("bioroots/bioroots_utilities", path="bioroots_utilities.smk",branch="kube_dirs")
     config: config
 
 use rule * from BR as other_*
 
 if not "sc_hashtags" in config:
     config["sc_hashtags"] = "no"
-
-# setting organism from reference
-#f = open(os.path.join(GLOBAL_REF_PATH,"reference_info","reference.json"),)
-#reference_dict = json.load(f)
-#f.close()
-#config["organism"] = [organism_name.lower().replace(" ","_") for organism_name in reference_dict.keys() if isinstance(reference_dict[organism_name],dict) and config["reference"] in reference_dict[organism_name].keys()][0]
 
 sample_tab = BR.load_sample()
 config["lib_ROI"] = "RNA"
@@ -30,7 +23,6 @@ ref_data_suffix = config["reference"]
 BR.load_ref()
 BR.load_organism()
 
-
 ##### Config processing #####
 #
 # Folders
@@ -39,7 +31,6 @@ reference_directory = BR.reference_directory()
 
 # Samples
 #
-
 SAMPLES = [x for x in sample_tab.sample_name]
 LIBS = [x.rsplit("_",1)[0] for x in SAMPLES]
 
@@ -54,7 +45,7 @@ NUMS = [x.rsplit("_",1)[1] for x in SAMPLES]
 if not config["is_paired"]:
     read_pair_tags = [""]
 else:
-    read_pair_tags = ["_R1","_R2"] * (len(SAMPLES) // 2)
+    read_pair_tags = ["_R1","_R2"]
 
 
 wildcard_constraints:
@@ -63,9 +54,8 @@ wildcard_constraints:
     read_pair_tag = "(_R.)?"
 
 
-
 rule all:
-    input: BR.remote("cell_ranger/outs/web_summary.html")
+    input: BR.remote("cell_ranger/outs/web_summary.html"),
     output: BR.remote("completed.txt")
     shell: "touch {output}"
 
