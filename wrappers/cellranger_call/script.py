@@ -23,35 +23,35 @@ with zipfile.ZipFile(snakemake.input.cellranger_dir_zip, 'r') as cellranger_zip:
     for info in cellranger_zip.infolist():
         extract_file(cellranger_zip, info, snakemake.params.wdir)
 
-SAMPLE = [x for x in snakemake.params.sample]
-LIBS = list(set([x.rsplit("_", 1)[0] for x in SAMPLE]))
-
 f = open(log_filename, 'wt')
 f.write("\n##\n## RULE: cellranger_call \n##\n")
 f.close()
 
-###### FASTQ SYMLINK preprocessing
 
-# CREATE the symbolic link between the file in raw_fastq and singleCell_fastq folder
+###### FASTQ preprocessing
+# cellranger requires fastqs to conform to a specific naming scheme
+
+
+def copy_fastq(raw_fastqs, output_fastqs):
+    for i in range(len(raw_fastqs)):
+        command = "cp " + raw_fastqs[i] + " " + output_fastqs[i]
+        f = open(log_filename, 'at')
+        f.write("## COMMAND: " + command + "\n")
+        f.close()
+        shell(command)
+
+
+# create target directories
 for singlecell_fastq in set(map(os.path.dirname, snakemake.output.c1 + snakemake.output.c2)):
     command = "mkdir -p " + singlecell_fastq
-    shell(command)
-# f = open(log_filename, 'at')
-# f.write("## COMMAND: "+command+"\n")
-# f.close()
-
-
-for i in range(len(snakemake.input.fastq1)):
-    command = "cp " + snakemake.input.fastq1[i] + " " + snakemake.output.c1[i]
+    f = open(log_filename, 'at')
+    f.write("## COMMAND: " + command + "\n")
+    f.close()
     shell(command)
 
-for i in range(len(snakemake.input.fastq2)):
-    command = "cp " + snakemake.input.fastq2[i] + " " + snakemake.output.c2[i]
-    shell(command)
+copy_fastq(snakemake.input.fastq1, snakemake.output.c1)
+copy_fastq(snakemake.input.fastq2, snakemake.output.c2)
 
-# f = open(log_filename, 'at')
-# f.write("## COMMAND: "+command+"\n")
-# f.close()
 
 # CREATE the csv file if not existing and add the header
 lf = open(snakemake.input.libraries, "w")
@@ -63,13 +63,13 @@ f.close()
 
 # ADD info to csv
 # CHECK if "GE" is in the name of the library
-for x in LIBS:
+for x in snakemake.params.libs:
     f = open(log_filename, 'at')
     f.write("## COMMAND: create " + x + " folder\n")
     f.close()
 
-    SAMPLE_LIB_DIR = os.path.join(snakemake.params.wdir, "singleCell_fastq", x)
-    line_to_write = "/tmp/" + SAMPLE_LIB_DIR + "," + x + "," + snakemake.params.library_types_dict[x] + "\n"
+    SAMPLE_LIB_DIR = os.path.join("/tmp", snakemake.params.wdir, "singleCell_fastq", x)
+    line_to_write = SAMPLE_LIB_DIR + "," + x + "," + snakemake.params.library_types_dict[x] + "\n"
     lf = open(snakemake.input.libraries, "at")
     lf.write(line_to_write)
     lf.close()
@@ -92,24 +92,11 @@ command = "cd " + snakemake.params.wdir + "; rm -Rf " + snakemake.params.outdir 
           " --libraries=" + os.path.basename(snakemake.input.libraries) + \
           " " + feature_ref_parameter + \
           " --transcriptome=" + "/tmp/" + snakemake.params.transcriptome + \
-          " --localcores " + str(snakemake.threads)
-          # " >> " + log_filename.replace(snakemake.params.wdir + "/", "") + " 2>&1 ; cd .."
+          " --localcores " + str(snakemake.threads) + \
+          " >> " + log_filename.replace(snakemake.params.wdir + "/", "") + " 2>&1 ; cd .."
 
-# command =  "cd " + snakemake.params.wdir + " ; rm -Rf " + snakemake.params.outdir + " ; " + snakemake.input.binary + " count " + \
-#           " --id=" + snakemake.params.outdir + \
-#           " --libraries=" + os.path.basename(snakemake.input.libraries) + \
-#           " " + feature_ref_parameter + \
-#           " --transcriptome=" + snakemake.input.transcriptome + \
-#           " --localcores " + str(snakemake.threads) + \
-#           " >> " + log_filename.replace(snakemake.params.wdir + "/", "") + " 2>&1 ; cd .."
 
 f = open(log_filename, 'at')
 f.write("## COMMAND: " + command + "\n")
 f.close()
 shell(command)
-
-# command = "cp " + snakemake.params.HTML + " " + snakemake.output.REPORT
-# f = open(log_filename, 'at')
-# f.write("## COMMAND: " + command + "\n")
-# f.close()
-# shell(command)

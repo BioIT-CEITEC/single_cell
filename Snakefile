@@ -12,25 +12,24 @@ module BR:
 
 use rule * from BR as other_*
 
+#### Config preprocessing ####
+
 if not "sc_hashtags" in config:
     config["sc_hashtags"] = "no"
 
 sample_tab = BR.load_sample()
+read_pair_tags = BR.set_read_pair_tags()
+
 config["lib_ROI"] = "RNA"
 
-ref_data_suffix = config["reference"]
+#### Reference processing ####
 
-BR.load_ref()
-BR.load_organism()
-
-##### Config processing #####
-#
-# Folders
-#
+config = BR.load_ref()
+config = BR.load_organism()
 reference_directory = BR.reference_directory()
 
-# Samples
-#
+#### Samples processing ####
+
 SAMPLES = [x for x in sample_tab.sample_name]
 LIBS = [x.rsplit("_",1)[0] for x in SAMPLES]
 
@@ -41,12 +40,6 @@ for idx, val in enumerate(sample_tab.SC_lib_type):
     else:
         library_types_dict[LIBS[idx]] = val
 NUMS = [x.rsplit("_",1)[1] for x in SAMPLES]
-
-if not config["is_paired"]:
-    read_pair_tags = [""]
-else:
-    read_pair_tags = ["_R1","_R2"]
-
 
 wildcard_constraints:
     sample = "|".join(sample_tab.sample_name),

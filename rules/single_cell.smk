@@ -16,6 +16,7 @@ rule cellranger_call:
   params:
           wdir = BR.remote(os.path.join(config["globalTaskPath"], config["task_name"])),
           sample = SAMPLES,
+          libs = list(library_types_dict.keys()),
           outdir = "cell_ranger",
           transcriptome = BR.remote(expand("{ref_dir}/tool_data/cellranger/refdata-gex-{ref}",ref_dir=reference_directory,ref="GRCh38-2020-A")),
           sc_hashtags = config["sc_hashtags"],
@@ -24,11 +25,11 @@ rule cellranger_call:
           BR.remote("cell_ranger/outs/web_summary.html"),
           c1=BR.remote(expand("singleCell_fastq/{lib}/{lib}_S{num}_L001_R1_001.fastq.gz",zip,lib=LIBS,num=NUMS)),
           c2=BR.remote(expand("singleCell_fastq/{lib}/{lib}_S{num}_L001_R2_001.fastq.gz",zip,lib=LIBS,num=NUMS))
+
   log:    BR.remote("logs/all_samples/cellranger_call.log"),
   threads: 40
   conda:   "../wrappers/cellranger_call/env.yaml"
   script:  "../wrappers/cellranger_call/script.py"
-  # script: "../wrappers/cellranger_call/test_script.py"
 
 
 ####################################
