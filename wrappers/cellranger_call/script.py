@@ -10,7 +10,6 @@ log_filename = str(snakemake.log)
 
 
 # unzip cellranger
-
 def extract_file(zip_file, info, extract_dir):
     zip_file.extract(info.filename, path=extract_dir)
     out_path = os.path.join(extract_dir, info.filename)
@@ -29,17 +28,7 @@ f.close()
 
 
 ###### FASTQ preprocessing
-# cellranger requires fastqs to conform to a specific naming scheme
-
-
-def copy_fastq(raw_fastqs, output_fastqs):
-    for i in range(len(raw_fastqs)):
-        command = "cp " + raw_fastqs[i] + " " + output_fastqs[i]
-        f = open(log_filename, 'at')
-        f.write("## COMMAND: " + command + "\n")
-        f.close()
-        shell(command)
-
+# cellranger requires libraries to conform to a specific naming scheme
 
 # create target directories
 for singlecell_fastq in set(map(os.path.dirname, snakemake.output.c1 + snakemake.output.c2)):
@@ -48,6 +37,18 @@ for singlecell_fastq in set(map(os.path.dirname, snakemake.output.c1 + snakemake
     f.write("## COMMAND: " + command + "\n")
     f.close()
     shell(command)
+
+
+# copy and rename fastq
+def copy_fastq(raw_fastqs, output_fastqs):
+    assert len(raw_fastqs) == len(output_fastqs)
+    for i in range(len(raw_fastqs)):
+        command = "cp " + raw_fastqs[i] + " " + output_fastqs[i]
+        f = open(log_filename, 'at')
+        f.write("## COMMAND: " + command + "\n")
+        f.close()
+        shell(command)
+
 
 copy_fastq(snakemake.input.fastq1, snakemake.output.c1)
 copy_fastq(snakemake.input.fastq2, snakemake.output.c2)
@@ -78,12 +79,12 @@ f = open(log_filename, 'at')
 f.write("## COMMAND: filling" + snakemake.input.libraries + " file\n")
 f.close()
 
-# CALL cellranger
 if snakemake.params.sc_hashtags != "no":
     feature_ref_parameter = "--feature-ref=" + "/tmp/" + snakemake.input.feature_ref_path
 else:
     feature_ref_parameter = ""
 
+# CALL cellranger
 cmd = "chmod +x " + snakemake.params.wdir + "/cellranger-5.0.1/bin/cellranger"
 shell(cmd)
 
@@ -91,7 +92,7 @@ command = "cd " + snakemake.params.wdir + "; rm -Rf " + snakemake.params.outdir 
           " --id=" + snakemake.params.outdir + \
           " --libraries=" + os.path.basename(snakemake.input.libraries) + \
           " " + feature_ref_parameter + \
-          " --transcriptome=" + "/tmp/" + snakemake.params.transcriptome + \
+          " --transcriptome=" + "/tmp/" + snakemake.params.transcriptome_path + \
           " --localcores " + str(snakemake.threads) + \
           " >> " + log_filename.replace(snakemake.params.wdir + "/", "") + " 2>&1 ; cd .."
 
