@@ -48,7 +48,7 @@ wildcard_constraints:
 
 
 rule all:
-    input: BR.remote("cell_ranger/outs/web_summary.html"),
+    input: BR.remote(expand("cell_ranger/outs")),
     output: BR.remote("completed.txt")
     shell: "touch {output}"
 

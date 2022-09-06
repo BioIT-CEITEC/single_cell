@@ -8,6 +8,10 @@ from snakemake.shell import shell
 shell.executable("/bin/bash")
 log_filename = str(snakemake.log)
 
+script_wdir = os.getcwd()
+if script_wdir == snakemake.params.task_wdir:
+    snakemake.params.task_wdir = "."
+
 
 # unzip cellranger
 def extract_file(zip_file, info, extract_dir):
@@ -20,7 +24,7 @@ def extract_file(zip_file, info, extract_dir):
 
 with zipfile.ZipFile(snakemake.input.cellranger_dir_zip, 'r') as cellranger_zip:
     for info in cellranger_zip.infolist():
-        extract_file(cellranger_zip, info, snakemake.params.wdir)
+        extract_file(cellranger_zip, info, snakemake.params.task_wdir)
 
 f = open(log_filename, 'wt')
 f.write("\n##\n## RULE: cellranger_call \n##\n")
@@ -55,11 +59,11 @@ copy_fastq(snakemake.input.fastq2, snakemake.output.c2)
 
 
 # CREATE the csv file and add the header
-lf = open(snakemake.input.libraries, "w")
+lf = open(snakemake.params.libraries, "w")
 lf.write("fastqs,sample,library_type\n")
 lf.close()
 f = open(log_filename, 'at')
-f.write("## COMMAND: create" + snakemake.input.libraries + " file\n")
+f.write("## COMMAND: create" + snakemake.params.libraries + " file\n")
 f.close()
 
 # ADD info to csv
@@ -69,7 +73,7 @@ for x in snakemake.params.libs:
     f.write("## COMMAND: create " + x + " folder\n")
     f.close()
 
-    SAMPLE_LIB_DIR = os.path.join("/tmp", snakemake.params.wdir, "singleCell_fastq", x)
+    SAMPLE_LIB_DIR = os.path.join(script_wdir, snakemake.params.task_wdir, "singleCell_fastq", x)
     line_to_write = SAMPLE_LIB_DIR + "," + x + "," + snakemake.params.library_types_dict[x] + "\n"
     lf = open(snakemake.params.libraries, "at")
     lf.write(line_to_write)
@@ -80,27 +84,27 @@ f.write("## COMMAND: filling" + snakemake.params.libraries + " file\n")
 f.close()
 
 if snakemake.params.sc_hashtags != "no":
-    feature_ref_parameter = "--feature-ref=" + "/tmp/" + snakemake.input.feature_ref_path
+    feature_ref_parameter = "--feature-ref=" + os.path.join(script_wdir + snakemake.input.feature_ref_path)
 else:
     feature_ref_parameter = ""
 
-print("################# DEBUG #####################")
-print(f"current working dir: {os.getcwd()}")
-print(f"cwd contents: {os.listdir(os.getcwd())}")
-print("################# DEBUG END #####################")
+# print("################# DEBUG #####################")
+# print(f"current working dir: {os.getcwd()}")
+# print(f"cwd contents: {os.listdir(os.getcwd())}")
+# print("################# DEBUG END #####################")
+#
+# raise BrokenPipeError
 
 # CALL cellranger
 
-cmd = "chmod +x " + snakemake.params.wdir + "/cellranger-5.0.1/bin/cellranger"
-shell(cmd)
 
-command = "cd " + snakemake.params.wdir + "; rm -Rf " + snakemake.params.outdir + " ; " + "cellranger-5.0.1/bin/cellranger" + " count " + \
+command = "cd " + snakemake.params.task_wdir + "; rm -Rf " + snakemake.params.outdir + " ; " + "cellranger-5.0.1/bin/cellranger" + " count " + \
           " --id=" + snakemake.params.outdir + \
           " --libraries=" + os.path.basename(snakemake.params.libraries) + \
           " " + feature_ref_parameter + \
-          " --transcriptome=" + "/tmp/" + snakemake.params.transcriptome_path + \
+          " --transcriptome=" + os.path.join(script_wdir, snakemake.params.transcriptome_files_path) + \
           " --localcores " + str(snakemake.threads) + \
-          " >> " + log_filename.replace(snakemake.params.wdir + "/", "") + " 2>&1 ; cd .."
+          " >> " + log_filename.replace(snakemake.params.task_wdir + "/", "") + " 2>&1 ; cd .."
 
 
 f = open(log_filename, 'at')

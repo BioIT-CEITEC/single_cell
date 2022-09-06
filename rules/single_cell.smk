@@ -13,16 +13,16 @@ rule cellranger_call:
          feature_ref_path = BR.remote(expand("{ref_path}/tools/cellranger/feature_ref_files/feature_ref_{sc_hashtag}.csv",
              sc_hashtag=config["sc_hashtags"], ref_path=config["globalResources"])),
   params:
-          wdir = BR.remote(os.path.join(config["globalTaskPath"], config["task_name"])),
-          libraries = BR.remote(os.path.join(config["entity_name"]+".lib.csv")),
+          task_wdir = BR.get_path(os.path.join(config["globalTaskPath"], config["task_name"])),
+          libraries = BR.get_path(os.path.join(config["entity_name"]+".lib.csv")),
           sample = SAMPLES,
-          transcriptome_path = BR.remote(expand("{ref_dir}/tool_data/cellranger/refdata-gex-{ref}",ref_dir=reference_directory,ref="GRCh38-2020-A")),
+          transcriptome_files_path = BR.get_path(expand("{ref_dir}/tool_data/cellranger/refdata-gex-{ref}",ref_dir=reference_directory,ref="GRCh38-2020-A")),
           libs = list(library_types_dict.keys()),
           outdir = "cell_ranger",
           sc_hashtags = config["sc_hashtags"],
           library_types_dict = library_types_dict,
   output:
-          directory(BR.remote("cell_ranger/outs")),
+          BR.remote("cell_ranger/outs"),
           c1=BR.remote(expand("singleCell_fastq/{lib}/{lib}_S{num}_L001_R1_001.fastq.gz",zip,lib=LIBS,num=NUMS)),
           c2=BR.remote(expand("singleCell_fastq/{lib}/{lib}_S{num}_L001_R2_001.fastq.gz",zip,lib=LIBS,num=NUMS))
 
