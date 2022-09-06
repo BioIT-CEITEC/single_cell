@@ -9,12 +9,12 @@ rule cellranger_call:
          fastq1=BR.remote(expand("raw_fastq/{lib}_{num}_R1.fastq.gz",zip,lib=LIBS,num=NUMS)),
          fastq2=BR.remote(expand("raw_fastq/{lib}_{num}_R2.fastq.gz",zip,lib=LIBS,num=NUMS)),
          cellranger_dir_zip = BR.remote(os.path.join(config["globalResources"], "tools/cellranger/cellranger-5.0.1.zip")),
-         transcriptome_files = BR.remote_dir(expand("{ref_dir}/tool_data/cellranger/refdata-gex-{ref}",ref_dir=reference_directory,ref="GRCh38-2020-A")),
-         libraries = BR.remote(os.path.join(config["entity_name"]+".lib.csv")),
+         transcriptome_files = BR.remote_input_dir(expand("{ref_dir}/tool_data/cellranger/refdata-gex-{ref}",ref_dir=reference_directory,ref="GRCh38-2020-A")),
          feature_ref_path = BR.remote(expand("{ref_path}/tools/cellranger/feature_ref_files/feature_ref_{sc_hashtag}.csv",
              sc_hashtag=config["sc_hashtags"], ref_path=config["globalResources"])),
   params:
           wdir = BR.remote(os.path.join(config["globalTaskPath"], config["task_name"])),
+          libraries = BR.remote(os.path.join(config["entity_name"]+".lib.csv")),
           sample = SAMPLES,
           transcriptome_path = BR.remote(expand("{ref_dir}/tool_data/cellranger/refdata-gex-{ref}",ref_dir=reference_directory,ref="GRCh38-2020-A")),
           libs = list(library_types_dict.keys()),
@@ -22,7 +22,7 @@ rule cellranger_call:
           sc_hashtags = config["sc_hashtags"],
           library_types_dict = library_types_dict,
   output:
-          BR.remote("cell_ranger/outs/web_summary.html"),
+          directory(BR.remote("cell_ranger/outs")),
           c1=BR.remote(expand("singleCell_fastq/{lib}/{lib}_S{num}_L001_R1_001.fastq.gz",zip,lib=LIBS,num=NUMS)),
           c2=BR.remote(expand("singleCell_fastq/{lib}/{lib}_S{num}_L001_R2_001.fastq.gz",zip,lib=LIBS,num=NUMS))
 
@@ -32,7 +32,13 @@ rule cellranger_call:
   script:  "../wrappers/cellranger_call/script.py"
 
 
-####################################
+# rule test:
+#       input: BR.remote_dir(os.path.join(config["globalTaskPath"],config["task_name"],"test"))
+#       output: res = directory(BR.remote_dir("result_dir"))
+#       script: "../wrappers/cellranger_call/test_script.py"
+
+
+  ####################################
 # FASTQ_SYMLINK RULEs
 #
 # rule fastq_symlink:

@@ -43,7 +43,7 @@ for singlecell_fastq in set(map(os.path.dirname, snakemake.output.c1 + snakemake
 def copy_fastq(raw_fastqs, output_fastqs):
     assert len(raw_fastqs) == len(output_fastqs)
     for i in range(len(raw_fastqs)):
-        command = "cp " + raw_fastqs[i] + " " + output_fastqs[i]
+        command = "mv " + raw_fastqs[i] + " " + output_fastqs[i]
         f = open(log_filename, 'at')
         f.write("## COMMAND: " + command + "\n")
         f.close()
@@ -54,7 +54,7 @@ copy_fastq(snakemake.input.fastq1, snakemake.output.c1)
 copy_fastq(snakemake.input.fastq2, snakemake.output.c2)
 
 
-# CREATE the csv file if not existing and add the header
+# CREATE the csv file and add the header
 lf = open(snakemake.input.libraries, "w")
 lf.write("fastqs,sample,library_type\n")
 lf.close()
@@ -71,12 +71,12 @@ for x in snakemake.params.libs:
 
     SAMPLE_LIB_DIR = os.path.join("/tmp", snakemake.params.wdir, "singleCell_fastq", x)
     line_to_write = SAMPLE_LIB_DIR + "," + x + "," + snakemake.params.library_types_dict[x] + "\n"
-    lf = open(snakemake.input.libraries, "at")
+    lf = open(snakemake.params.libraries, "at")
     lf.write(line_to_write)
     lf.close()
 
 f = open(log_filename, 'at')
-f.write("## COMMAND: filling" + snakemake.input.libraries + " file\n")
+f.write("## COMMAND: filling" + snakemake.params.libraries + " file\n")
 f.close()
 
 if snakemake.params.sc_hashtags != "no":
@@ -84,13 +84,19 @@ if snakemake.params.sc_hashtags != "no":
 else:
     feature_ref_parameter = ""
 
+print("################# DEBUG #####################")
+print(f"current working dir: {os.getcwd()}")
+print(f"cwd contents: {os.listdir(os.getcwd())}")
+print("################# DEBUG END #####################")
+
 # CALL cellranger
+
 cmd = "chmod +x " + snakemake.params.wdir + "/cellranger-5.0.1/bin/cellranger"
 shell(cmd)
 
 command = "cd " + snakemake.params.wdir + "; rm -Rf " + snakemake.params.outdir + " ; " + "cellranger-5.0.1/bin/cellranger" + " count " + \
           " --id=" + snakemake.params.outdir + \
-          " --libraries=" + os.path.basename(snakemake.input.libraries) + \
+          " --libraries=" + os.path.basename(snakemake.params.libraries) + \
           " " + feature_ref_parameter + \
           " --transcriptome=" + "/tmp/" + snakemake.params.transcriptome_path + \
           " --localcores " + str(snakemake.threads) + \
