@@ -1,5 +1,6 @@
 from snakemake.utils import min_version
-
+import os
+import glob
 min_version("7.2.1")
 
 configfile: "config.json"
@@ -47,8 +48,31 @@ wildcard_constraints:
     read_pair_tag = "(_R.)?"
 
 
+def out_dir(dir_path):
+    contents = []
+    for root, dirs, files in os.walk(dir_path,followlinks=True):
+        for file in files:
+            contents.append(os.path.join(root, file))
+    print(contents)
+    if len(contents) == 0:
+        return dir_path
+    return contents
+
+
 rule all:
-    input: BR.remote(expand("cell_ranger/outs")),
+    input:
+        BR.remote("cell_ranger/outs/filtered_feature_bc_matrix/barcodes.tsv.gz"),
+        BR.remote("cell_ranger/outs/filtered_feature_bc_matrix/features.tsv.gz"),
+        BR.remote("cell_ranger/outs/filtered_feature_bc_matrix/matrix.mtx.gz"),
+        BR.remote("cell_ranger/outs/filtered_feature_bc_matrix.h5"),
+        BR.remote("cell_ranger/outs/metrics_summary.csv"),
+        BR.remote("cell_ranger/outs/molecule_info.h5"),
+        BR.remote("cell_ranger/outs/raw_feature_bc_matrix.h5"),
+        BR.remote("cell_ranger/outs/web_summary.html"),
+        BR.remote("cell_ranger/outs/raw_feature_bc_matrix/barcodes.tsv.gz"),
+        BR.remote("cell_ranger/outs/raw_feature_bc_matrix/features.tsv.gz"),
+        BR.remote("cell_ranger/outs/raw_feature_bc_matrix/matrix.mtx.gz"),
+        BR.remote("cell_ranger/outs/cloupe.cloupe"),
     output: BR.remote("completed.txt")
     shell: "touch {output}"
 
