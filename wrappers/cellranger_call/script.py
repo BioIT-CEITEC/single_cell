@@ -25,7 +25,7 @@ shell(command)
 # cellranger requires libraries to conform to a specific naming scheme
 
 # create target directories
-for singlecell_fastq in set(map(os.path.dirname, snakemake.output.c1 + snakemake.output.c2)):
+for singlecell_fastq in set(map(os.path.dirname, snakemake.params.c1 + snakemake.params.c2)):
     command = "mkdir -p " + singlecell_fastq
     f = open(log_filename, 'at')
     f.write("## COMMAND: " + command + "\n")
@@ -44,8 +44,8 @@ def rename_fastq(raw_fastqs, output_fastqs):
         shell(command)
 
 
-rename_fastq(snakemake.input.fastq1, snakemake.output.c1)
-rename_fastq(snakemake.input.fastq2, snakemake.output.c2)
+rename_fastq(snakemake.input.fastq1, snakemake.params.c1)
+rename_fastq(snakemake.input.fastq2, snakemake.params.c2)
 
 
 # CREATE the csv file and add the header
