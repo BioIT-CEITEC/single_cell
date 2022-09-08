@@ -1,9 +1,10 @@
 ######################################
 # wrapper for rule: cellranger_call
 ######################################
-import os, zipfile
+import os
 
 from snakemake.shell import shell
+
 
 shell.executable("/bin/bash")
 log_filename = str(snakemake.log)
@@ -15,7 +16,7 @@ if script_wdir == snakemake.params.task_wdir:
     script_wdir = ""
 
 # unzip cellranger
-command = "tar -xf " + snakemake.input.cellranger_dir_tar + " -C " + snakemake.params.task_wdir
+command = "tar -xpf " + snakemake.input.cellranger_dir_tar + " -C " + snakemake.params.task_wdir
 f = open(log_filename, 'at')
 f.write("## COMMAND: " + command + "\n")
 f.close()
@@ -70,7 +71,7 @@ for x in snakemake.params.libs:
     lf.close()
 
 f = open(log_filename, 'at')
-f.write("## COMMAND: filling" + snakemake.params.libraries + " file\n")
+f.write("## COMMAND: filling  " + snakemake.params.libraries + " file\n")
 f.close()
 
 if snakemake.params.sc_hashtags != "no":
@@ -86,7 +87,7 @@ command = "cd " + snakemake.params.task_wdir + "; rm -Rf " + snakemake.params.ou
           " " + feature_ref_parameter + \
           " --transcriptome=" + os.path.join(script_wdir, snakemake.params.transcriptome_files_path) + \
           " --localcores " + str(snakemake.threads) + \
-          " >> " + log_filename.replace(snakemake.params.task_wdir + "/", "") + " 2>&1 ; cd .."
+          " >> " + log_filename.replace(snakemake.params.task_wdir + "/", "") + " 2>&1 ; cd "
 
 
 f = open(log_filename, 'at')

@@ -1,6 +1,4 @@
 from snakemake.utils import min_version
-import os
-import glob
 min_version("7.2.1")
 
 configfile: "config.json"
@@ -46,17 +44,6 @@ wildcard_constraints:
     sample = "|".join(sample_tab.sample_name),
     lib_name="[^\.\/]+",
     read_pair_tag = "(_R.)?"
-
-
-def out_dir(dir_path):
-    contents = []
-    for root, dirs, files in os.walk(dir_path,followlinks=True):
-        for file in files:
-            contents.append(os.path.join(root, file))
-    print(contents)
-    if len(contents) == 0:
-        return dir_path
-    return contents
 
 
 rule all:
