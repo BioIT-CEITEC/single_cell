@@ -4,7 +4,6 @@
 #
 import os
 
-
 rule cellranger_call:
     input:
         fastq1=BR.remote(expand("raw_fastq/{lib}_{num}_R1.fastq.gz",zip,lib=LIBS,num=NUMS)),
@@ -19,6 +18,7 @@ rule cellranger_call:
         transcriptome_files_path = BR.get_path(os.path.join(reference_directory, "tool_data/cellranger/refdata-gex-GRCh38-2020-A")),
         libs = list(library_types_dict.keys()),
         outdir = "cell_ranger",
+        computing_type = config["computing_type"],
         c1=BR.remote(expand("singleCell_fastq/{lib}/{lib}_S{num}_L001_R1_001.fastq.gz",zip,lib=LIBS,num=NUMS)),
         c2=BR.remote(expand("singleCell_fastq/{lib}/{lib}_S{num}_L001_R2_001.fastq.gz",zip,lib=LIBS,num=NUMS)),
         sc_hashtags = config["sc_hashtags"],
