@@ -7,7 +7,7 @@ min_version("5.18.0")
 
 configfile: "config.json"
 
-GLOBAL_REF_PATH = "/mnt/references/"
+GLOBAL_REF_PATH = config["globalResources"]
 
 
 if not "sc_hashtags" in config:
