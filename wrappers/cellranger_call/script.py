@@ -47,13 +47,23 @@ if snakemake.params.sc_hashtags != "no":
 else:
     feature_ref_parameter = ""
 
-command = "cd " + snakemake.params.wdir + " ; rm -Rf " + snakemake.params.outdir + " ; " + snakemake.params.binary + " count " + \
+command = "cp -a " + os.path.join(snakemake.params.ref_path,os.path.dirname(snakemake.params.binary))  + " " + snakemake.params.tmpd
+
+command = "cd " + snakemake.params.wdir + " ; rm -Rf " + snakemake.params.outdir + " ; " + os.path.join(snakemake.params.tmpd,snakemake.params.binary) + " count " + \
           " --id=" + snakemake.params.outdir + \
           " --libraries=" + os.path.basename(snakemake.params.libraries) + \
           " " + feature_ref_parameter + \
           " --transcriptome=" + snakemake.params.transcriptome + \
           " --localcores " + str(snakemake.threads) + \
           " >> " + log_filename.replace(snakemake.params.wdir + "/", "") + " 2>&1 ; cd .."
+
+# command = "cd " + snakemake.params.wdir + " ; rm -Rf " + snakemake.params.outdir + " ; " + snakemake.params.binary + " count " + \
+#           " --id=" + snakemake.params.outdir + \
+#           " --libraries=" + os.path.basename(snakemake.params.libraries) + \
+#           " " + feature_ref_parameter + \
+#           " --transcriptome=" + snakemake.params.transcriptome + \
+#           " --localcores " + str(snakemake.threads) + \
+#           " >> " + log_filename.replace(snakemake.params.wdir + "/", "") + " 2>&1 ; cd .."
 
 f = open(log_filename, 'at')
 f.write("## COMMAND: " + command + "\n")

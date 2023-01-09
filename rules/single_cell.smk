@@ -10,11 +10,14 @@ rule cellranger_call:
           libraries = os.path.join(config["entity_name"]+".lib.csv"),
           wdir = os.getcwd(),
           outdir = "cell_ranger",
-          binary = os.path.join(GLOBAL_REF_PATH,"general/cellranger/cellranger-5.0.1","cellranger"),
+          # binary = os.path.join(GLOBAL_REF_PATH,"general/cellranger/cellranger-5.0.1","cellranger"),
+          binary = os.path.join("general/cellranger/cellranger-5.0.1","cellranger"),
           feature_ref_dir = os.path.join(GLOBAL_REF_PATH,"general/cellranger/feature_ref_files"),
           sc_hashtags = config["sc_hashtags"],
           library_types_dict = library_types_dict,
-          transcriptome = expand("{ref_dir}/other/cellranger/refdata-gex-{ref}",ref_dir=reference_directory,ref=config["reference"])[0]
+          transcriptome = expand("{ref_dir}/other/cellranger/refdata-gex-{ref}",ref_dir=reference_directory,ref=config["reference"])[0],
+          tmpd = GLOBAL_TMPD_PATH,
+          ref_path = GLOBAL_REF_PATH
   output: "cell_ranger/outs/web_summary.html"
   log:   "logs/all_samples/cellranger_call.log",
   threads: 40
