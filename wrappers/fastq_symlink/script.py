@@ -19,7 +19,7 @@ f = open(log_filename, 'at')
 f.write("## COMMAND: "+command+"\n")
 f.close()
 
-command = "cp -a " + snakemake.input.fastq +" "+snakemake.output.singleCell
+command = "cp " + snakemake.input.fastq +" "+snakemake.output.singleCell
 shell(command)
 
 f = open(log_filename, 'at')
