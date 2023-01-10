@@ -29,7 +29,7 @@ rule cellranger_call:
 
 rule fastq_symlink:
   input: fastq= "raw_fastq/{lib}_{num}{read_pair_tag}.fastq.gz",
-  output: singleCell = os.path.join(GLOBAL_TMPD_PATH,"singleCell_fastq/{lib}/{lib}_S{num}_L001{read_pair_tag}_001.fastq.gz"),
+  output: singleCell = "singleCell_fastq/{lib}/{lib}_S{num}_L001{read_pair_tag}_001.fastq.gz",
   log:    "logs/{lib}/{lib}_{num}{read_pair_tag}_singleCell_preprocess.log",
   params: wdir = os.getcwd()
   threads: 1
