@@ -10,10 +10,13 @@ configfile: "config.json"
 GLOBAL_REF_PATH = config["globalResources"]
 GLOBAL_TMPD_PATH = config["globalTmpdPath"]
 
+os.makedirs(GLOBAL_TMPD_PATH, exist_ok=True)
 
 if not "sc_hashtags" in config:
     config["sc_hashtags"] = "no"
 
+if not 'cellranger_version' in config:
+    config['cellranger_version'] = "5.0.1"
 
 # setting organism from reference
 f = open(os.path.join(GLOBAL_REF_PATH,"reference_info","reference2.json"),)

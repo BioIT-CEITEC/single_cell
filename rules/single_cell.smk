@@ -3,15 +3,21 @@
 # CELLRANGER RULES
 #
 
+onerror:
+    print("Cellranger failed cause it's stupid!")
+    shell("ls -ld /tmp/*cell* >> {log}")
+    shell("cat /tmp/cell_ranger/_log >> {log}")
+
 rule cellranger_call:
-  input: c1 = expand("singleCell_fastq/{lib}/{lib}_S{num}_L001_R1_001.fastq.gz", zip,  lib=LIBS, num=NUMS),
-         c2 = expand("singleCell_fastq/{lib}/{lib}_S{num}_L001_R2_001.fastq.gz", zip,  lib=LIBS, num=NUMS)
+  input: c1 = expand(GLOBAL_TMPD_PATH+"/singleCell_fastq/{lib}/{lib}_S{num}_L001_R1_001.fastq.gz", zip,  lib=LIBS, num=NUMS),
+         c2 = expand(GLOBAL_TMPD_PATH+"/singleCell_fastq/{lib}/{lib}_S{num}_L001_R2_001.fastq.gz", zip,  lib=LIBS, num=NUMS),
+         tar = os.path.join(GLOBAL_REF_PATH,"general/cellranger/cellranger-"+config['cellranger_version']+".tar.gz")
   params: sample = SAMPLES,
           libraries = os.path.join(config["entity_name"]+".lib.csv"),
-          wdir = os.getcwd(),
+          wdir = GLOBAL_TMPD_PATH,
           outdir = "cell_ranger",
-          binary = os.path.join(GLOBAL_REF_PATH,"general/cellranger/cellranger-5.0.1","cellranger"),
-          path = os.path.join(GLOBAL_REF_PATH,"general/cellranger/cellranger-5.0.1"),
+          bin_path = os.path.join(GLOBAL_TMPD_PATH,"cellranger-"+config['cellranger_version']),
+          tar_path = GLOBAL_TMPD_PATH,
           feature_ref_dir = os.path.join(GLOBAL_REF_PATH,"general/cellranger/feature_ref_files"),
           sc_hashtags = config["sc_hashtags"],
           library_types_dict = library_types_dict,
@@ -29,7 +35,7 @@ rule cellranger_call:
 
 rule fastq_symlink:
   input: fastq= "raw_fastq/{lib}_{num}{read_pair_tag}.fastq.gz",
-  output: singleCell = "singleCell_fastq/{lib}/{lib}_S{num}_L001{read_pair_tag}_001.fastq.gz",
+  output: singleCell = GLOBAL_TMPD_PATH+"/singleCell_fastq/{lib}/{lib}_S{num}_L001{read_pair_tag}_001.fastq.gz",
   log:    "logs/{lib}/{lib}_{num}{read_pair_tag}_singleCell_preprocess.log",
   params: wdir = os.getcwd()
   threads: 1
