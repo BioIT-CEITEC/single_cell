@@ -9,8 +9,8 @@ onerror:
     shell("cat /tmp/cell_ranger/_log >> {log}")
 
 rule cellranger_call:
-  input: c1 = expand(GLOBAL_TMPD_PATH+"/singleCell_fastq/{lib}/{lib}_S{num}_L001_R1_001.fastq.gz", zip,  lib=LIBS, num=NUMS),
-         c2 = expand(GLOBAL_TMPD_PATH+"/singleCell_fastq/{lib}/{lib}_S{num}_L001_R2_001.fastq.gz", zip,  lib=LIBS, num=NUMS),
+  input: c1 = expand("singleCell_fastq/{lib}/{lib}_S{num}_L001_R1_001.fastq.gz", zip,  lib=LIBS, num=NUMS),
+         c2 = expand("singleCell_fastq/{lib}/{lib}_S{num}_L001_R2_001.fastq.gz", zip,  lib=LIBS, num=NUMS),
          tar = os.path.join(GLOBAL_REF_PATH,"general/cellranger/cellranger-"+config['cellranger_version']+".tar.gz")
   params: sample = SAMPLES,
           libraries = os.path.join(config["entity_name"]+".lib.csv"),
@@ -35,7 +35,7 @@ rule cellranger_call:
 
 rule fastq_symlink:
   input: fastq= "raw_fastq/{lib}_{num}{read_pair_tag}.fastq.gz",
-  output: singleCell = GLOBAL_TMPD_PATH+"/singleCell_fastq/{lib}/{lib}_S{num}_L001{read_pair_tag}_001.fastq.gz",
+  output: singleCell = "singleCell_fastq/{lib}/{lib}_S{num}_L001{read_pair_tag}_001.fastq.gz",
   log:    "logs/{lib}/{lib}_{num}{read_pair_tag}_singleCell_preprocess.log",
   params: wdir = os.getcwd()
   threads: 1
