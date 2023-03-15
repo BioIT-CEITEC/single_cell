@@ -2,6 +2,7 @@
 # wrapper for rule: cellranger_call
 ######################################
 import os
+import uuid
 from snakemake.shell import shell
 
 shell.executable("/bin/bash")
@@ -57,9 +58,10 @@ if snakemake.params.sc_hashtags != "no":
 else:
     feature_ref_parameter = ""
 
-command = "cd " + snakemake.params.wdir + " ; rm -Rf " + snakemake.params.outdir + \
-          " ; export PATH="+snakemake.params.bin_path+":$PATH && cellranger count " + \
-          " --id=" + snakemake.params.outdir + \
+workdir = snakemake.params.outdir+"_"+uuid.uuid4().hex
+command = "cd " + snakemake.params.wdir + \
+          " ; export PATH="+snakemake.params.bin_path+":$PATH && $(which time) cellranger count " + \
+          " --id=" + workdir + \
           " --libraries=" + libfile + \
           " " + feature_ref_parameter + \
           " --transcriptome=" + snakemake.params.transcriptome + \
@@ -70,7 +72,7 @@ f.write("## COMMAND: " + command + "\n")
 f.close()
 shell(command)
 
-command = "rsync -rtv " + os.path.join(snakemake.params.wdir,snakemake.params.outdir) + " " + pwd+ " >> "+log_filename+" 2>&1"
+command = "rsync -rtv " + os.path.join(snakemake.params.wdir,workdir,".") + " " + os.path.join(pwd,snakemake.params.outdir)+ " >> "+log_filename+" 2>&1"
 f = open(log_filename, 'at')
 f.write("## COMMAND: " + command + "\n")
 f.close()
