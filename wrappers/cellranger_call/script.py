@@ -3,9 +3,11 @@
 ######################################
 import os
 from snakemake.shell import shell
-shell.executable("/bin/bash")
-log_filename = str(snakemake.log)
 
+shell.executable("/bin/bash")
+
+pwd = os.getcwd()
+log_filename = os.path.join(pwd,str(snakemake.log))
 
 SAMPLE = [x for x in snakemake.params.sample]
 LIBS = list(set([x.rsplit("_", 1)[0] for x in SAMPLE]))
@@ -16,30 +18,38 @@ f.close()
 
 
 # CREATE the csv file if not existing and add the header
-lf = open(snakemake.params.libraries, "w")
+libfile = os.path.join(pwd,snakemake.params.libraries)
+f = open(log_filename, 'at')
+f.write("## INFO: creating " + libfile + " file\n")
+f.close()
+lf = open(libfile, "w")
 lf.write("fastqs,sample,library_type\n")
 lf.close()
-f = open(log_filename, 'at')
-f.write("## COMMAND: create" + snakemake.params.libraries + " file\n")
-f.close()
 
 # ADD info to csv
 # CHECK if "GE" is in the name of the library
 for x in LIBS:
 
     f = open(log_filename, 'at')
-    f.write("## COMMAND: create " + x + " folder\n")
+    f.write("## INFO: creating " + x + " folder\n")
     f.close()
 
-    SAMPLE_LIB_DIR = os.path.join(snakemake.params.wdir, "singleCell_fastq", x)
+    SAMPLE_LIB_DIR = os.path.join(pwd,"singleCell_fastq", x)
     line_to_write = SAMPLE_LIB_DIR + "," + x + "," + snakemake.params.library_types_dict[x] + "\n"
-    lf = open(snakemake.params.libraries, "at")
+    lf = open(libfile, "at")
     lf.write(line_to_write)
     lf.close()
 
 f = open(log_filename, 'at')
-f.write("## COMMAND: filling" + snakemake.params.libraries + " file\n")
+f.write("## INFO: filling " + libfile + " file\n")
 f.close()
+
+# Extract cellranger tar archive into tmp
+command = "tar -zxvf "+snakemake.input.tar+" -C "+snakemake.params.wdir+" --skip-old-files >> "+log_filename+" 2>&1"
+f = open(log_filename, 'at')
+f.write("## COMMAND: " + command + "\n")
+f.close()
+shell(command)
 
 # CALL cellranger
 if snakemake.params.sc_hashtags != "no":
@@ -47,20 +57,21 @@ if snakemake.params.sc_hashtags != "no":
 else:
     feature_ref_parameter = ""
 
-command = "cd " + snakemake.params.wdir + " ; rm -Rf " + snakemake.params.outdir + " ; export PATH="+snakemake.params.path+":$PATH && " + snakemake.params.binary + " count " + \
+command = "cd " + snakemake.params.wdir + " ; rm -Rf " + snakemake.params.outdir + \
+          " ; export PATH="+snakemake.params.bin_path+":$PATH && cellranger count " + \
           " --id=" + snakemake.params.outdir + \
-          " --libraries=" + os.path.basename(snakemake.params.libraries) + \
+          " --libraries=" + libfile + \
           " " + feature_ref_parameter + \
           " --transcriptome=" + snakemake.params.transcriptome + \
           " --localcores=" + str(snakemake.threads) + \
-          " >> " + log_filename.replace(snakemake.params.wdir + "/", "") + " 2>&1"
+          " >> " + log_filename + " 2>&1"
 f = open(log_filename, 'at')
 f.write("## COMMAND: " + command + "\n")
 f.close()
 shell(command)
 
-# command = "cp " + snakemake.params.HTML + " " + snakemake.output.REPORT
-# f = open(log_filename, 'at')
-# f.write("## COMMAND: " + command + "\n")
-# f.close()
-# shell(command)
+command = "rsync -rtv " + os.path.join(snakemake.params.wdir,snakemake.params.outdir) + " " + pwd+ " >> "+log_filename+" 2>&1"
+f = open(log_filename, 'at')
+f.write("## COMMAND: " + command + "\n")
+f.close()
+shell(command)
