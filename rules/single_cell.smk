@@ -3,10 +3,10 @@
 # CELLRANGER RULES
 #
 
-onerror:
-    print("Cellranger failed cause it's stupid!")
-    shell("ls -ld /tmp/*cell*")
-    shell("cat /tmp/cell_ranger/_log")
+#onerror:
+#    print("Cellranger failed cause it's stupid!")
+#    shell("ls -ld /tmp/*cell*")
+#    shell("cat /tmp/cell_ranger/_log")
 
 rule cellranger_call:
   input: c1 = expand("singleCell_fastq/{lib}/{lib}_S{num}_L001_R1_001.fastq.gz", zip,  lib=LIBS, num=NUMS),
@@ -24,6 +24,7 @@ rule cellranger_call:
           transcriptome = expand("{ref_dir}/other/cellranger/refdata-gex-{ref}",ref_dir=reference_directory,ref=config["reference"])[0]
   log:   "logs/all_samples/cellranger_call.log",
   threads: 40
+  resources: mem = 100
   conda:   "../wrappers/cellranger_call/env.yaml"
   script:  "../wrappers/cellranger_call/script.py"
 

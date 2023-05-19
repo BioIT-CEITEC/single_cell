@@ -66,6 +66,7 @@ command = "cd " + snakemake.params.wdir + \
           " " + feature_ref_parameter + \
           " --transcriptome=" + snakemake.params.transcriptome + \
           " --localcores=" + str(snakemake.threads) + \
+          " --localmem=" + str(snakemake.resources.mem) + \
           " >> " + log_filename + " 2>&1"
 f = open(log_filename, 'at')
 f.write("## COMMAND: " + command + "\n")
