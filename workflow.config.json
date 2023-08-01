@@ -28,12 +28,12 @@
     },
     "detailed": {
       "sc_hashtags": {
-        "label": "Feature barcoding",                                                                                                                                                                                                  │······
-        "type": "enum",                                                                                                                                                                                                                │······
-        "default": "classic",                                                                                                                                                                                                          │······
-        "list": {                                                                                                                                                                                                                      │······
-          "classic": "Hashtags",                                                                                                                                                                                                       │······
-          "citeseq": "CITE-seq",                                                                                                                                                                                                       │······
+        "label": "Feature barcoding",
+        "type": "enum",
+        "default": "classic",
+        "list": {
+          "classic": "Hashtags",
+          "citeseq": "CITE-seq",
           "no": "None"
         }
       }
