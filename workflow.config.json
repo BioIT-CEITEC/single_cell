@@ -8,9 +8,9 @@
     "outputs": [
       "cell_ranger/*"
     ],
-    "report_index": "cell_ranger/outs/web_summary.html",
+    "report_index": "starsolo/outs/web_summary.html",
     "reports":[
-       "cell_ranger/outs/web_summary.html"
+       "starsolo/outs/web_summary.html"
     ]
   },
   "general_params": [
@@ -42,7 +42,7 @@
           "None": "None"
         }
       }
-    }
+    },
     "detailed": {
       "preset_parameters": {
         "label": "Preset STARsolo parameters",
