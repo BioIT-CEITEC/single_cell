@@ -28,7 +28,7 @@
       "assay_type": {
         "label": "Assay type",
         "type": "enum",
-        "default": "tenX_v3",
+        "default": "None",
         "list": {
           "tenX_v3": "10x 3’ v3",
           "tenX_v2": "10x 3’ v2",
@@ -98,7 +98,7 @@
       "soloCellFilter": {
         "label": "soloCellFilter",
         "type": "enum",
-        "default": "EmptyDrops_CR",
+        "default": "no",
         "list": {
           "EmptyDrops_CR": "EmptyDrops_CR",
           "CellRanger2.2": "CellRanger2.2",
