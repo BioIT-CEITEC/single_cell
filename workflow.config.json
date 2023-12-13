@@ -49,7 +49,7 @@
         "type": "string",
         "default": "",
         "conditions": {
-          "values": {
+          "value": {
             "assay_type": {
               "tenX_v3": " --soloType CB_UMI_Simple --soloCBstart 1 --soloCBlen 16 --soloUMIstart 17 --soloUMIlen 12 --soloCBmatchWLtype 1MM_multi_Nbase_pseudocounts --soloUMIfiltering MultiGeneUMI_CR --soloUMIdedup 1MM_CR --clipAdapterType CellRanger4 --outFilterScoreMin 30 --outSAMtype BAM SortedByCoordinate --outSAMattributes CR UR CY UY CB UB",
               "tenX_multiome": " --soloType CB_UMI_Simple --soloCBstart 1 --soloCBlen 16 --soloUMIstart 17 --soloUMIlen 12 --soloCBmatchWLtype 1MM_multi_Nbase_pseudocounts --soloUMIfiltering MultiGeneUMI_CR --soloUMIdedup 1MM_CR --clipAdapterType CellRanger4 --outFilterScoreMin 30 --outSAMtype BAM SortedByCoordinate --outSAMattributes CR UR CY UY CB UB",
@@ -68,7 +68,7 @@
         "type": "string",
         "default": "Unstranded",
         "conditions": {
-          "values": {
+          "value": {
             "assay_type": {
               "tenX_v3": "Forward",
               "tenX_v2": "Forward",
@@ -84,7 +84,7 @@
         "type": "string",
         "default": "",
         "conditions": {
-          "values": {
+          "value": {
             "assay_type": {
               "tenX_v3": "737K-april-2014_rc.txt.gz",
               "tenX_v2": "737K-august-2016.txt.gz",
@@ -110,8 +110,8 @@
         "type": "string",
         "default": "",
         "conditions": {
-          "values": {
-            "assay_type": {
+          "value": {
+            "soloCellFilter": {
               "EmptyDrops_CR": " --soloCellFilter EmptyDrops_CR 3000 0.99 10 45000 90000 500 0.01 20000 0.01 10000",
               "CellRanger2.2": " --soloCellFilter CellRanger2.2 3000 0.99 10"
             }
