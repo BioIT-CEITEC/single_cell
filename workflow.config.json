@@ -41,6 +41,16 @@
           "ShareSeq": "ShareSeq",
           "None": "None"
         }
+      },
+      "soloCellFilter": {
+        "label": "soloCellFilter",
+        "type": "enum",
+        "default": "no",
+        "list": {
+          "EmptyDrops_CR": "EmptyDrops_CR",
+          "CellRanger2.2": "CellRanger2.2",
+          "no": "None"
+        }
       }
     },
     "detailed": {
@@ -93,16 +103,6 @@
               "tenX_5p_pe": "737K-august-2016.txt.gz"
             }
           }
-        }
-      },
-      "soloCellFilter": {
-        "label": "soloCellFilter",
-        "type": "enum",
-        "default": "no",
-        "list": {
-          "EmptyDrops_CR": "EmptyDrops_CR",
-          "CellRanger2.2": "CellRanger2.2",
-          "no": "None"
         }
       },
       "soloCellFilter_cmd": {
