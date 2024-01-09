@@ -38,8 +38,8 @@ rule STARSolo_call:
             genome = config["organism_fasta"],# defined in utilities
             gtf=config["organism_gtf"],# defined in utilities
             index=config["organism_star"]  # defined in utilities
-    output: bam = "mapped/{sample}.solo.bam",
-            bai = "mapped/{sample}.solo.bam.bai",
+    output: bam = "mapped/{lib}_S{num}.solo.bam",
+            bai = "mapped/{lib}_S{num}.solo.bam.bai",
             # transcriptome_bam = "mapped/transcriptome/{sample}.not_markDups.transcriptome.bam",
             # transcriptome_bai = "mapped/transcriptome/{sample}.not_markDups.transcriptome.bam.bai",
     log:    "logs/{sample}/starsolo.log"
