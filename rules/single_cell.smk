@@ -35,9 +35,9 @@
 rule STARSolo_call:
     input:  c1 = expand("singleCell_fastq/{lib}/{lib}_S{num}_L001_R1_001.fastq.gz", zip,  lib=LIBS, num=NUMS),
             c2 = expand("singleCell_fastq/{lib}/{lib}_S{num}_L001_R2_001.fastq.gz", zip,  lib=LIBS, num=NUMS),
-            genome = expand("{ref_dir}/seq/{ref}.fa",ref_dir=reference_directory,ref=config["reference"]),
-            gtf = expand("{ref_dir}/annot/{ref}.gtf",ref_dir=reference_directory,ref=config["reference"]),
-            index = expand("{ref_dir}/index/STAR/SAindex",ref_dir=reference_directory,ref=config["reference"])
+            genome = config["organism_fasta"],# defined in utilities
+            gtf=config["organism_gtf"],# defined in utilities
+            index=config["organism_star"]  # defined in utilities
     output: bam = "mapped/{sample}.solo.bam",
             bai = "mapped/{sample}.solo.bam.bai",
             # transcriptome_bam = "mapped/transcriptome/{sample}.not_markDups.transcriptome.bam",
