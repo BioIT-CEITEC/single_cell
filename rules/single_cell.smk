@@ -1,8 +1,7 @@
 rule STARSolo_call:
     input:  c1 = expand("singleCell_fastq/{lib}/{lib}_S{num}_L001_R1_001.fastq.gz", zip,  lib=LIBS, num=NUMS),
             c2 = expand("singleCell_fastq/{lib}/{lib}_S{num}_L001_R2_001.fastq.gz", zip,  lib=LIBS, num=NUMS),
-            genome = config["organism_fasta"],# defined in utilities
-            gtf=config["organism_gtf"],# defined in utilities
+            gtf=config["organism_gtf_cellranger"],# defined in utilities
             index=config["organism_starsolo"],  # defined in utilities
             whitelist = CR_whitelist
     output: bam = "mapped/{lib}_S{num}.solo.bam",
@@ -14,8 +13,8 @@ rule STARSolo_call:
             tmpd = GLOBAL_TMPD_PATH,
             assay = config["assay_type"],
             tool_folder = config["tool_path"]
-    conda: "../wrappers/alignment_RNA/env.yaml"
-    script: "../wrappers/alignment_RNA/script.py"
+    conda: "../wrappers/star_solo_call/env.yaml"
+    script: "../wrappers/star_solo_call/script.py"
 
 rule fastq_symlink:
   input: fastq= "raw_fastq/{lib}_{num}{read_pair_tag}.fastq.gz",

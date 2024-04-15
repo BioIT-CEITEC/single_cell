@@ -39,6 +39,7 @@ shell(command)
 command = "STAR --genomeDir " + dirname(snakemake.input.idx) + \
           " --readFilesCommand zcat " + \
           " --runThreadN " + str(snakemake.threads) + \
+          " --sjdbGTFfile " + snakemake.input.gtf + \
           " --readFilesIn " + str(snakemake.input.c2) + " " + str(snakemake.input.c1) + \
           " --soloType CB_UMI_Simple " + \
           " --outFileNamePrefix " + snakemake.params.prefix +  \
