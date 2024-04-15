@@ -1,16 +1,12 @@
 {
   "workflow_description": {
-    "name": "single_cell",
-    "version": 2.0,
-    "label": "Single cell",
-    "type": "single_cell",
+    "name": "STARsolo_single_cell",
+    "version": 1.0,
+    "label": "STARsolo Single cell",
+    "type": "STARsolo_single_cell",
     "inputs": "raw_fastq/{sample}*fastq.gz",
     "outputs": [
-      "cell_ranger/*"
-    ],
-    "report_index": "starsolo/outs/web_summary.html",
-    "reports":[
-       "starsolo/outs/web_summary.html"
+      "mapped/*"
     ]
   },
   "general_params": [
@@ -28,115 +24,26 @@
       "assay_type": {
         "label": "Assay type",
         "type": "enum",
-        "default": "None",
+        "default": "tenX_v3",
         "list": {
-          "tenX_v3": "10x 3’ v3",
-          "tenX_v2": "10x 3’ v2",
+          "tenX_v3": "10x 3' v3",
+          "tenX_v2": "10x 3' v2",
           "tenX_multiome": "10x multiome",
           "tenX_5p": "10x chemistry SC5P-R2",
           "tenX_5p_pe": "10x chemistry SC5P-PE",
           "DropSeq": "DropSeq",
           "SeqWell": "SeqWell",
           "SlideSeq": "SlideSeq",
-          "ShareSeq": "ShareSeq",
-          "None": "None"
+          "ShareSeq": "ShareSeq"
         }
       },
       "soloCellFilter": {
         "label": "soloCellFilter",
         "type": "enum",
-        "default": "no",
+        "default": "EmptyDrops_CR",
         "list": {
           "EmptyDrops_CR": "EmptyDrops_CR",
-          "CellRanger2.2": "CellRanger2.2",
-          "no": "None"
-        }
-      }
-    },
-    "detailed": {
-      "preset_parameters": {
-        "label": "Preset STARsolo parameters",
-        "type": "string",
-        "default": "",
-        "conditions": {
-          "value": {
-            "assay_type": {
-              "tenX_v3": " --soloType CB_UMI_Simple --soloCBstart 1 --soloCBlen 16 --soloUMIstart 17 --soloUMIlen 12 --soloCBmatchWLtype 1MM_multi_Nbase_pseudocounts --soloUMIfiltering MultiGeneUMI_CR --soloUMIdedup 1MM_CR --clipAdapterType CellRanger4 --outFilterScoreMin 30 --outSAMtype BAM SortedByCoordinate --outSAMattributes CR UR CY UY CB UB",
-              "tenX_multiome": " --soloType CB_UMI_Simple --soloCBstart 1 --soloCBlen 16 --soloUMIstart 17 --soloUMIlen 12 --soloCBmatchWLtype 1MM_multi_Nbase_pseudocounts --soloUMIfiltering MultiGeneUMI_CR --soloUMIdedup 1MM_CR --clipAdapterType CellRanger4 --outFilterScoreMin 30 --outSAMtype BAM SortedByCoordinate --outSAMattributes CR UR CY UY CB UB",
-              "tenX_v2": " --soloType CB_UMI_Simple --soloCBstart 1 --soloCBlen 16 --soloUMIstart 17 --soloUMIlen 10 --soloCBmatchWLtype 1MM_multi_Nbase_pseudocounts --soloUMIfiltering MultiGeneUMI_CR --soloUMIdedup 1MM_CR --clipAdapterType CellRanger4 --outFilterScoreMin 30 --outSAMtype BAM SortedByCoordinate --outSAMattributes CR UR CY UY CB UB",
-              "tenX_5p": " --soloType CB_UMI_Simple --soloCBstart 1 --soloCBlen 16 --soloUMIstart 17 --soloUMIlen 10 --soloCBmatchWLtype 1MM_multi_Nbase_pseudocounts --soloUMIfiltering MultiGeneUMI_CR --soloUMIdedup 1MM_CR --outFilterScoreMin 30 --outSAMtype BAM SortedByCoordinate --outSAMattributes CR UR CY UY CB UB",
-              "tenX_5p_pe": " --soloType CB_UMI_Simple --soloCBstart 1 --soloCBlen 16 --soloUMIstart 17 --soloUMIlen 10 --soloCBmatchWLtype 1MM_multi_Nbase_pseudocounts --soloUMIfiltering MultiGeneUMI_CR --soloBarcodeMate 1 --clip5pNbases 39 0 --soloUMIdedup 1MM_CR --outFilterScoreMin 30 --outSAMtype BAM SortedByCoordinate --outSAMattributes CR UR CY UY CB UB",
-              "DropSeq": " --soloType CB_UMI_Simple --soloCBstart 1 --soloCBlen 12 --soloUMIstart 13 --soloUMIlen 8 --outSAMtype BAM SortedByCoordinate --outSAMattributes CR UR CY UY CB UB",
-              "SeqWell": " --soloType CB_UMI_Simple --soloCBstart 1 --soloCBlen 12 --soloUMIstart 13 --soloUMIlen 8 --outSAMtype BAM SortedByCoordinate --outSAMattributes CR UR CY UY CB UB",
-              "ShareSeq": " --soloType CB_UMI_Simple --soloCBstart 1 --soloCBlen 24 --soloUMIstart 25 --soloUMIlen 10 --soloCBmatchWLtype 1MM_multi_Nbase_pseudocounts --soloUMIfiltering MultiGeneUMI_CR --soloUMIdedup 1MM_CR --clipAdapterType CellRanger4 --outFilterScoreMin 30 --outSAMtype BAM SortedByCoordinate --outSAMattributes CR UR CY UY CB UB"
-            }
-          }
-        }
-      },
-      "soloStrand": {
-        "label": "soloStrand parameter",
-        "type": "string",
-        "default": "Unstranded",
-        "conditions": {
-          "value": {
-            "assay_type": {
-              "tenX_v3": "Forward",
-              "tenX_v2": "Forward",
-              "tenX_multiome": "Forward",
-              "tenX_5p": "Reverse",
-              "tenX_5p_pe": "Forward"
-            }
-          }
-        }
-      },
-      "barcodes": {
-        "label": "Barcode parameters",
-        "type": "string",
-        "default": "",
-        "conditions": {
-          "value": {
-            "assay_type": {
-              "tenX_v3": "737K-april-2014_rc.txt.gz",
-              "tenX_v2": "737K-august-2016.txt.gz",
-              "tenX_multiome": "737K-arc-v1.txt.gz",
-              "tenX_5p": "737K-august-2016.txt.gz",
-              "tenX_5p_pe": "737K-august-2016.txt.gz"
-            }
-          }
-        }
-      },
-      "soloCellFilter_cmd": {
-        "label": "soloCellFilter parameters",
-        "type": "string",
-        "default": "",
-        "conditions": {
-          "value": {
-            "soloCellFilter": {
-              "EmptyDrops_CR": " --soloCellFilter EmptyDrops_CR 3000 0.99 10 45000 90000 500 0.01 20000 0.01 10000",
-              "CellRanger2.2": " --soloCellFilter CellRanger2.2 3000 0.99 10"
-            }
-          }
-        }
-      },
-      "sc_hashtags": {
-        "label": "Feature barcoding",
-        "type": "enum",
-        "default": "classic",
-        "list": {
-          "classic": "Hashtags",
-          "citeseq": "CITE-seq",
-          "no": "None"
-        }
-      }
-    },
-    "samples": {
-      "SC_lib_type": {
-        "label": "SC library type",
-        "type": "enum",
-        "default": "Gene Expression",
-        "list": {
-          "Gene Expression": "Gene Expression",
-          "Antibody Capture": "Antibody Capture"
+          "CellRanger2.2": "CellRanger2.2"
         }
       }
     }

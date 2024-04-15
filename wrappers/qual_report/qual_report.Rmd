@@ -1,0 +1,59 @@
+---
+title: "<span style='font-size: 57px;'>Alignment summary by STARsolo</span>"
+date: "This analysis was finished on `r format(Sys.time(), '%Y-%m-%d %H:%M:%S')`"
+params:
+  args1: "sample_name"
+output:
+  html_document:
+    theme: spacelab
+    font-family: Bookman, sans-serif
+---
+
+
+```{r, echo = FALSE}
+library(data.table)
+library(ggplot2)
+library(scales)
+
+summary <- fread(paste0("../../",params$args1))
+summary <- summary[-8,]
+summary$V2 <-as.numeric(summary$V2)
+num_reads <- summary[1,]
+num_reads[,V2 := comma(V2)]
+sequencing <- summary[c(2:5,11),]
+sequencing[,V2 := paste(V2*100,"%")]
+sequencing_summ <- rbind(num_reads, sequencing)
+setnames(sequencing_summ, c("V1","V2"), c("Summary","Results"))
+mapping_1 <- summary[6:8,]
+mapping_1[, V2 := paste(V2*100, "%")]
+mapping_2 <- summary[10,]
+mapping_2[, V2 := comma(V2)]
+mapping_summ <- rbind(mapping_1, mapping_2)
+setnames(mapping_summ, c("V1","V2"), c("Summary","Results"))
+cell_1 <- summary[11,]
+cell_1[,V2 := paste(V2*100, "%")]
+cell_2 <- summary[12:19,]
+cell_2[,V2:=comma(V2)]
+cell_summ <- rbind(cell_1, cell_2)
+setnames(cell_summ, c("V1","V2"), c("Summary","Results"))
+```
+
+# **Sequencing summary**
+
+```{r, echo = FALSE} 
+knitr::kable(sequencing_summ)
+```
+
+
+# **Mapping summary**
+
+```{r, echo = FALSE}
+knitr::kable(mapping_summ)
+```
+
+# **Cells Summary**
+
+```{r, echo = FALSE}
+knitr::kable(cell_summ)
+```
+
