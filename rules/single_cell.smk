@@ -3,23 +3,26 @@ rule STARSolo_call:
             c2 = expand("singleCell_fastq/{lib}/{lib}_S{num}_L001_R2_001.fastq.gz", zip,  lib=LIBS, num=NUMS),
             gtf=config["organism_gtf_cellranger"],# defined in utilities
             index=config["organism_starsolo"],  # defined in utilities
-            whitelist = CR_whitelist
     output: bam = "mapped/{lib}_S{num}.solo.bam",
             bai = "mapped/{lib}_S{num}.solo.bam.bai",
-    log:    "logs/{sample}/starsolo.log"
+            barcodes = "mapped/{lib}_S{num}/{lib}_S{num}_Solo.out/Gene/filtered/barcodes.tsv",
+            summary = "mapped/{lib}_S{num}/{lib}_S{num}_Solo.out/Gene/Summary.csv"
+    log:    "logs/{lib}_S{num}/starsolo.log"
     threads: 40
     resources:  mem = 34
-    params: prefix = "mapped/{lib}_S{num}/{lib}_S{num}",
+    params: prefix = "mapped/{lib}_S{num}/{lib}_S{num}_",
             tmpd = GLOBAL_TMPD_PATH,
             assay = config["assay_type"],
-            tool_folder = config["tool_path"]
+            tool_folder = config["tooldir"],
+            cellfilt = config["soloCellFilter"],
+            sample = "{lib}_S{num}"
     conda: "../wrappers/star_solo_call/env.yaml"
     script: "../wrappers/star_solo_call/script.py"
 
 rule fastq_symlink:
   input: fastq= "raw_fastq/{lib}_{num}{read_pair_tag}.fastq.gz",
   output: singleCell = "singleCell_fastq/{lib}/{lib}_S{num}_L001{read_pair_tag}_001.fastq.gz",
-  log:    "logs/{lib}/{lib}_{num}{read_pair_tag}_singleCell_preprocess.log",
+  log:    "logs/{lib}_S{num}/{lib}_S{num}{read_pair_tag}_singleCell_preprocess.log",
   params: wdir = os.getcwd()
   threads: 1
   conda:  "../wrappers/fastq_symlink/env.yaml"

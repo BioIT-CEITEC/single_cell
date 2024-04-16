@@ -17,7 +17,7 @@ os.makedirs(GLOBAL_TMPD_PATH, exist_ok=True)
 sample_tab = pd.DataFrame.from_dict(config["samples"], orient = "index")
 
 module BR:
-    snakefile: gitlab("bioroots/bioroots_utils", path = "bioroots_utilities.smk", branch = "master")
+    snakefile: gitlab("bioroots/bioroots_utilities", path="bioroots_utilities.smk",branch="master")
     config: config
 
 use rule * from BR as other_*
@@ -41,9 +41,9 @@ wildcard_constraints:
 
 rule all:
     input:
-        expand("mapped/{lib}_S{num}/{lib}_S{num}.rds", sample = sample_tab.sample_name),
-        expand("mapped/{lib}_S{num}/{lib}_S_{num}_qc_report.html", sample = sample_tab.sample_name)
+        expand("mapped/{lib}_S{num}/{lib}_S{num}.rds", zip, lib = LIBS, num = NUMS, sample = sample_tab.sample_name),
+        expand("mapped/{lib}_S{num}/{lib}_S{num}_qc_report.html", zip, lib = LIBS, num = NUMS, sample = sample_tab.sample_name)
 
 ##### Modules #####
 
-include: "rules/STARsolo_sc.smk"
+include: "rules/single_cell.smk"
