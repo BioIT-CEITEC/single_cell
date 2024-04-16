@@ -3,8 +3,7 @@ rule STARSolo_call:
             c2 = expand("singleCell_fastq/{lib}/{lib}_S{num}_L001_R2_001.fastq.gz", zip,  lib=LIBS, num=NUMS),
             gtf=config["organism_gtf_cellranger"],# defined in utilities
             index=config["organism_starsolo"],  # defined in utilities
-    output: bam = "mapped/{lib}_S{num}.solo.bam",
-            bai = "mapped/{lib}_S{num}.solo.bam.bai",
+    output: bam = "mapped/{lib}_S{num}/{lib}_S{num}.solo.bam",
             barcodes = "mapped/{lib}_S{num}/{lib}_S{num}_Solo.out/Gene/filtered/barcodes.tsv",
             summary = "mapped/{lib}_S{num}/{lib}_S{num}_Solo.out/Gene/Summary.csv"
     log:    "logs/{lib}_S{num}/starsolo.log"
@@ -29,15 +28,17 @@ rule fastq_symlink:
   script: "../wrappers/fastq_symlink/script.py"
 
 rule seurat_obj:
-  input:  counts = "mapped/{lib}_S{num}/{lib}_S{num}_Solo.out/Gene/filtered/barcodes.tsv"
+  input:  counts = "mapped/{lib}_S{num}/{lib}_S{num}_Solo.out/Gene/filtered/barcodes.tsv",
   output: rds = "mapped/{lib}_S{num}/{lib}_S{num}.rds",
-          folder = "mapped/{lib}_S{num}/Plots/{lib}_S{num}_1_UMAP.png"
+          folder = "mapped/{lib}_S{num}/Plots/{lib}_S{num}_1_UMAP.png",
+  params: sample = "{lib}_S{num}"
   log:   "logs/{lib}_S{num}/{lib}_S{num}_seurat.log",
   conda:   "../wrappers/seurat/env.yaml"
   script:  "../wrappers/seurat/script.py"
 
 rule qc_report:
-  input: csv = "mapped/{lib}_S{num}/{lib}_S{num}_Solo.out/Gene/Summary.csv"
+  input: csv = "mapped/{lib}_S{num}/{lib}_S{num}_Solo.out/Gene/Summary.csv",
+         pic = "mapped/{lib}_S{num}/Plots/{lib}_S{num}_1_UMAP.png"
   output: html = "mapped/{lib}_S{num}/{lib}_S{num}_qc_report.html"
   log:   "logs/{lib}_S{num}/{lib}_S{num}_qc_report.log"
   conda:  "../wrappers/qual_report/env.yaml"
