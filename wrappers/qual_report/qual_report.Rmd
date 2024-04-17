@@ -1,19 +1,37 @@
 ---
-title: "<span style='font-size: 57px;'>Alignment summary by STARsolo</span>"
-date: "This analysis was finished on `r format(Sys.time(), '%Y-%m-%d %H:%M:%S')`"
+#date: "This analysis was finished on `r format(Sys.time(), '%Y-%m-%d %H:%M:%S')`"
 params:
-  args1: "sample_name"
+  args1: "sample_folder"
+  args2: "sample_name"
 output:
   html_document:
     theme: spacelab
     font-family: Bookman, sans-serif
 ---
 
+---
+title: <b>Alignment summary by STARsolo for the sample `r paste(params$args2)`</b>
+author:
+  - CEITEC Bioinformatics Core Facility
+---
 
-```{r, echo = FALSE}
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, warning = FALSE)
+```
+
+```{r load-packages, include= FALSE}
 library(data.table)
 library(ggplot2)
 library(scales)
+library(flextable)
+
+knitr::opts_chunk$set(echo = TRUE, warning = FALSE)
+set_flextable_defaults(font.family = "Arial", font.size = 12, padding.top = 3, padding.bottom = 3)
+```
+
+
+```{r report formatting, echo = FALSE}
 
 summary <- fread(paste0("../../",params$args1))
 summary <- summary[-8,]
@@ -38,22 +56,60 @@ cell_summ <- rbind(cell_1, cell_2)
 setnames(cell_summ, c("V1","V2"), c("Summary","Results"))
 ```
 
-# **Sequencing summary**
+# <u>Sequencing summary</u>
 
-```{r, echo = FALSE} 
+```{r, echo = FALSE}
 knitr::kable(sequencing_summ)
 ```
 
 
-# **Mapping summary**
+# <u>Mapping summary</u>
 
 ```{r, echo = FALSE}
 knitr::kable(mapping_summ)
 ```
 
-# **Cells Summary**
+# <u>Cells Summary</u>
 
 ```{r, echo = FALSE}
 knitr::kable(cell_summ)
 ```
 
+```{r, results='asis', out.width="80%", echo = FALSE, dev = "svg"}
+  cluster_names <- paste0("cluster ", 1:12)
+image_paths_umap <- paste0("../../mapped/", params$args2, "/Plots/", params$args2, "_", 1:12, "_UMAP.png")
+dt_umap <- data.table(cluster = cluster_names, path = image_paths_umap)
+
+image_paths_tsne <- paste0("../../mapped/", params$args2, "/Plots/", params$args2, "_", 1:12, "_TSNE.png")
+dt_tsne <- data.table(cluster = cluster_names, path = image_paths_tsne)
+```
+
+### {-}
+
+# <u>Cluster Summary: UMAP</u>
+```{r umap-plot,echo=FALSE, out.width="80%", results="asis", dev="svg"}
+umap_plot <- function(dt = dt) {
+    output<-c(cat("#### Results for 12 UMAP c;usters {.tabset} \n"))
+    for (i in 1:length(dt$path)){
+      output <- c(output,cat("##### ", dt$cluster[i],"\n"))
+      output<-c(output,cat("<div align='center'><figure style='width:80%'><img src=",dt$path[i]," /><figcaption> </figcaption></figure></div>"))
+    }
+  return(output)
+}
+umap <- umap_plot(dt_umap)
+```
+
+### {-}
+
+# <u>Cluster Summary: t-SNE</u>
+```{r tsne-plot,echo=FALSE, out.width="80%", results="asis", dev="svg"}
+tsne_plot <- function(dt = dt) {
+    output<-c(cat("#### Results for 12 t-SNE clusters {.tabset} \n"))
+    for (i in 1:length(dt$path)){
+      output <- c(output,cat("##### ", dt$cluster[i],"\n"))
+      output<-c(output,cat("<div align='center'><figure style='width:80%'><img src=",dt$path[i]," /><figcaption> </figcaption></figure></div>"))
+    }
+  return(output)
+}
+tsne <- tsne_plot(dt_tsne)
+```

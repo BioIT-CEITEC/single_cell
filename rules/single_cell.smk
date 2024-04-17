@@ -40,6 +40,7 @@ rule qc_report:
   input: csv = "mapped/{lib}_S{num}/{lib}_S{num}_Solo.out/Gene/Summary.csv",
          pic = "mapped/{lib}_S{num}/Plots/{lib}_S{num}_1_UMAP.png"
   output: html = "mapped/{lib}_S{num}/{lib}_S{num}_qc_report.html"
+  params: sample = "{lib}_S{num}"
   log:   "logs/{lib}_S{num}/{lib}_S{num}_qc_report.log"
   conda:  "../wrappers/qual_report/env.yaml"
   script:  "../wrappers/qual_report/script.py"

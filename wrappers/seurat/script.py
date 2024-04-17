@@ -11,10 +11,8 @@ f = open(log_filename, 'wt')
 f.write("\n##\n## RULE: seurat_object_creation \n##\n")
 f.close()
 
-#working_folder = os.getcwd() + "/results/" + snakemake.wildcards.sample + "/" + snakemake.wildcards.sample + "_Log.out"
-
 command = "Rscript " + os.path.abspath(dirname(__file__) + "/seurat_obj.R ") + \
-            dirname(snakemake.input.counts) + " " + dirname(snakemake.output.rds) + " "+ snakemake.wildcards.sample  + " >> " + log_filename + " 2>&1" #+ " " + dirname(snakemake.output.folder)
+            dirname(snakemake.input.counts) + " " + dirname(snakemake.output.rds) + " "+ snakemake.params.sample  + " >> " + log_filename + " 2>&1"
 f = open(log_filename, 'at')
 f.write("## COMMAND: "+command+"\n")
 f.close()
