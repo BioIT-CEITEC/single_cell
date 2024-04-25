@@ -14,8 +14,6 @@ os.makedirs(GLOBAL_TMPD_PATH, exist_ok=True)
 
 ##### BioRoots utilities #####
 
-sample_tab = pd.DataFrame.from_dict(config["samples"], orient = "index")
-
 module BR:
     snakefile: gitlab("bioroots/bioroots_utilities", path="bioroots_utilities.smk",branch="master")
     config: config
