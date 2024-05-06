@@ -1,6 +1,6 @@
 rule STARSolo_call:
-    input:  c1 = expand("singleCell_fastq/{lib}/{lib}_S{num}_L001_R1_001.fastq.gz", zip,  lib=LIBS, num=NUMS),
-            c2 = expand("singleCell_fastq/{lib}/{lib}_S{num}_L001_R2_001.fastq.gz", zip,  lib=LIBS, num=NUMS),
+    input:  c1 = "singleCell_fastq/{lib}/{lib}_S{num}_L001_R1_001.fastq.gz",
+            c2 = "singleCell_fastq/{lib}/{lib}_S{num}_L001_R2_001.fastq.gz",
             gtf=config["organism_gtf_cellranger"],# defined in utilities
             index=config["organism_starsolo"],  # defined in utilities
     output: bam = "mapped/{lib}_S{num}/{lib}_S{num}.solo.bam",
