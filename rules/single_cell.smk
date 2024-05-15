@@ -35,7 +35,7 @@ rule seurat_obj:
   log:   "logs/{lib}_S{num}/{lib}_S{num}_seurat.log",
   conda:   "../wrappers/seurat/env.yaml"
   script:  "../wrappers/seurat/script.py"
-
+#
 rule qc_report:
   input: csv = "mapped/{lib}_S{num}/{lib}_S{num}_Solo.out/Gene/Summary.csv",
          pic = "mapped/{lib}_S{num}/Plots/{lib}_S{num}_1_UMAP.png"
