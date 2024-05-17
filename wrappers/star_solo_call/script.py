@@ -42,6 +42,7 @@ command = "STAR --genomeDir " + dirname(snakemake.input.index) + \
           " --readFilesIn " + str(snakemake.input.c2) + " " + str(snakemake.input.c1) + \
           " --soloType CB_UMI_Simple " + \
           " --outFileNamePrefix " + snakemake.params.prefix +  \
+          " --limitGenomeGenerateRAM " + str(snakemake.resources.mem * 1000000000) + \
           " --soloCBstart 1"  + flags + \
           " --soloFeatures Gene" + \
           " --outSAMtype BAM SortedByCoordinate" + \
