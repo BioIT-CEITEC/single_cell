@@ -12,31 +12,27 @@ GLOBAL_TMPD_PATH = config["globalTmpdPath"]
 
 os.makedirs(GLOBAL_TMPD_PATH, exist_ok=True)
 
+##### BioRoots utilities #####
+
+module BR:
+    snakefile: gitlab("bioroots/bioroots_utilities", path="bioroots_utilities.smk",branch="master")
+    config: config
+
+use rule * from BR as other_*
+
+##### Config processing #####
+
 if not "sc_hashtags" in config:
     config["sc_hashtags"] = "no"
 
 if not 'cellranger_version' in config:
     config['cellranger_version'] = "5.0.1"
 
-# setting organism from reference
-f = open(os.path.join(GLOBAL_REF_PATH,"reference_info","reference2.json"),)
-reference_dict = json.load(f)
-f.close()
-config["species_name"] = [organism_name for organism_name in reference_dict.keys() if isinstance(reference_dict[organism_name],dict) and config["reference"] in reference_dict[organism_name].keys()][0]
-config["organism"] = config["species_name"].split(" (")[0].lower().replace(" ","_")
-if len(config["species_name"].split(" (")) > 1:
-    config["species"] = config["species_name"].split(" (")[1].replace(")","")
+sample_tab = BR.load_sample()
 
+config = BR.load_organism()
 
-
-##### Config processing #####
-# Folders
-#
-reference_directory = os.path.join(GLOBAL_REF_PATH,config["organism"],config["reference"])
-
-# Samples
-#
-sample_tab = pd.DataFrame.from_dict(config["samples"],orient="index")
+config = BR.load_tooldir()
 
 SAMPLES = [x for x in sample_tab.sample_name]
 LIBS = [x.rsplit("_",1)[0] for x in SAMPLES]
@@ -48,13 +44,10 @@ for idx, val in enumerate(sample_tab.SC_lib_type):
         library_types_dict[LIBS[idx]] = val
 NUMS = [x.rsplit("_",1)[1] for x in SAMPLES]
 
-
 wildcard_constraints:
     sample = "|".join(sample_tab.sample_name),
     lib_name="[^\.\/]+",
     read_pair_tag = "(_R.)?"
-
-
 
 rule all:
     input: "cell_ranger/outs/web_summary.html"
