@@ -14,11 +14,11 @@ f.close()
 if snakemake.params.assay == "tenX_v3" or snakemake.params.assay == "tenX_multiome":
     flags = " --soloCBwhitelist " + os.path.join(snakemake.params.tool_folder, "cellranger/barcodes", "3M-february-2018.txt") + " --soloCBlen 16 --soloUMIstart 17 --soloUMIlen 12 --soloCBmatchWLtype 1MM_multi_Nbase_pseudocounts --soloUMIfiltering MultiGeneUMI_CR --soloUMIdedup 1MM_CR --clipAdapterType CellRanger4"
 if snakemake.params.assay == "tenX_v2":
-    flags = " --soloCBwhitelist " + os.path.join(snakemake.params.tool_folder, "cellranger/barcodes", "737K-august-2016") + " --soloCBlen 16 --soloUMIstart 17 --soloUMIlen 10 --soloCBmatchWLtype 1MM_multi_Nbase_pseudocounts --soloUMIfiltering MultiGeneUMI_CR --soloUMIdedup 1MM_CR --clipAdapterType CellRanger4"
+    flags = " --soloCBwhitelist " + os.path.join(snakemake.params.tool_folder, "cellranger/barcodes", "737K-august-2016.txt") + " --soloCBlen 16 --soloUMIstart 17 --soloUMIlen 10 --soloCBmatchWLtype 1MM_multi_Nbase_pseudocounts --soloUMIfiltering MultiGeneUMI_CR --soloUMIdedup 1MM_CR --clipAdapterType CellRanger4"
 if snakemake.params.assay == "tenX_5p":
     flags = " --soloCBwhitelist " + os.path.join(snakemake.params.tool_folder, "cellranger/barcodes", "737K-arc-v1.txt") + " --soloCBlen 16 --soloUMIstart 17 --soloUMIlen 10 --soloCBmatchWLtype 1MM_multi_Nbase_pseudocounts --soloUMIfiltering MultiGeneUMI_CR --soloUMIdedup 1MM_CR --outSAMtype BAM SortedByCoordinate --outSAMattributes CR UR CY UY CB UB"
 if snakemake.params.assay == "tenX_5p_pe":
-    flags = " --soloCBwhitelist " + os.path.join(snakemake.params.tool_folder, "cellranger/barcodes", "737K-august-2016") + " --soloCBlen 16 --soloUMIstart 17 --soloUMIlen 10 --soloCBmatchWLtype 1MM_multi_Nbase_pseudocounts --soloUMIfiltering MultiGeneUMI_CR --soloBarcodeMate 1 --clip5pNbases 39 0 --soloUMIdedup 1MM_CR"
+    flags = " --soloCBwhitelist " + os.path.join(snakemake.params.tool_folder, "cellranger/barcodes", "737K-august-2016.txt") + " --soloCBlen 16 --soloUMIstart 17 --soloUMIlen 10 --soloCBmatchWLtype 1MM_multi_Nbase_pseudocounts --soloUMIfiltering MultiGeneUMI_CR --soloBarcodeMate 1 --clip5pNbases 39 0 --soloUMIdedup 1MM_CR"
 if snakemake.params.assay == "DropSeq" or snakemake.params.assay == "SeqWell":
     flags = " --soloCBlen 12 --soloUMIstart 13 --soloUMIlen 8"
 if snakemake.params.assay == "ShareSeq":
