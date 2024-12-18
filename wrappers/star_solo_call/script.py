@@ -45,19 +45,19 @@ command = "STAR --genomeDir " + dirname(snakemake.input.index) + \
           " --limitGenomeGenerateRAM " + str(snakemake.resources.mem * 1000000000) + \
           " --soloCBstart 1"  + flags + \
           " --soloFeatures Gene" + \
-          " --outSAMtype BAM SortedByCoordinate" + \
+          " --outSAMtype BAM Unsorted" + \
           " --outFilterType BySJout" + \
           " --alignIntronMax 100000" + \
           " --quantMode GeneCounts" + \
           " --outFilterScoreMin 30" + \
-          " --outSAMattributes NH HI nM AS CB UB GX GN sS sQ sM " + \
+          " --outSAMattributes NH HI nM AS GX GN sS sQ sM " + \
           " --outTmpDir " + snakemake.params.tmpd + "/" + snakemake.params.sample + " >> " + log_filename + " 2>&1"
 f = open(log_filename, 'at')
 f.write("## COMMAND: "+command+"\n")
 f.close()
 shell(command)
 
-command = "mv " + str(snakemake.params.prefix) + "Aligned.sortedByCoord.out.bam " + str(snakemake.output.bam)
+command = "samtools sort -o " + str(snakemake.output.bam) + " " + str(snakemake.params.prefix) + "Aligned.out.bam " 
 f = open(log_filename, 'at')
 f.write("## COMMAND: "+command+"\n")
 f.close()
