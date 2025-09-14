@@ -4,7 +4,7 @@ rule STARSolo_call:
             gtf=config["organism_gtf_cellranger"],# defined in utilities
             index=config["organism_starsolo"],  # defined in utilities
     output: bam = "mapped/{lib}_S{num}/{lib}_S{num}.solo.bam",
-            barcodes = "mapped/{lib}_S{num}/{lib}_S{num}_Solo.out/Gene/filtered/barcodes.tsv",
+            barcodes = "mapped/{lib}_S{num}/{lib}_S{num}_Solo.out/Gene/raw/barcodes.tsv",
             summary = "mapped/{lib}_S{num}/{lib}_S{num}_Solo.out/Gene/Summary.csv"
     log:    "logs/{lib}_S{num}/starsolo.log"
     threads: 40
@@ -28,7 +28,7 @@ rule fastq_symlink:
   script: "../wrappers/fastq_symlink/script.py"
 
 rule seurat_obj:
-  input:  counts = "mapped/{lib}_S{num}/{lib}_S{num}_Solo.out/Gene/filtered/barcodes.tsv",
+  input:  counts = "mapped/{lib}_S{num}/{lib}_S{num}_Solo.out/Gene/raw/barcodes.tsv",
   output: rds = "mapped/{lib}_S{num}/{lib}_S{num}.rds",
           folder = "mapped/{lib}_S{num}/Plots/{lib}_S{num}_1_UMAP.png",
   params: sample = "{lib}_S{num}"
